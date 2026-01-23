@@ -6,7 +6,7 @@
     <title>Admin Panel - REG MSTSC</title>
     
     <link rel="icon" type="image/png" href="https://i.postimg.cc/yxjxZmRN/Logo-mstsc-(1)-(1).png">
-    
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -17,40 +17,44 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        :root {
-            --primary-color: #6A1B9A;
-            --secondary-color: #FFD600;
-            --bg-color: #f3f0f7;
-        }
+        :root { --primary-color: #6A1B9A; --secondary-color: #FFD600; --bg-color: #f3f0f7; }
+        body { font-family: 'Prompt', sans-serif; background-color: var(--bg-color); padding-bottom: 60px; }
 
-        body { 
-            font-family: 'Prompt', sans-serif; 
-            background-color: var(--bg-color); 
-            padding-bottom: 60px; 
-        }
+        /* Z-Index Fixes */
+        .swal2-container { z-index: 20000 !important; }
+        .modal-backdrop { z-index: 1040 !important; }
+        .modal { z-index: 1050 !important; }
 
-        .global-footer {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            text-align: center; padding: 15px; font-size: 0.75rem;
-            color: #6c757d; opacity: 0.8; z-index: 10000;
-            pointer-events: none;
+        #login-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: linear-gradient(135deg, #6A1B9A 0%, #311b92 100%); 
+            display: flex; align-items: center; justify-content: center; 
+            z-index: 9999; 
         }
-
-        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #6A1B9A 0%, #311b92 100%); display: flex; align-items: center; justify-content: center; z-index: 9999; }
         .login-box { background: white; padding: 40px; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+
+        .global-footer { position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; padding: 15px; font-size: 0.75rem; color: #6c757d; opacity: 0.8; z-index: 10000; pointer-events: none; }
         .admin-nav { background: var(--primary-color); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .admin-nav .logo { height: 40px; margin-right: 10px; border-radius: 50%; border: 2px solid var(--secondary-color); }
         .container-fluid { max-width: 1800px; padding: 30px; }
+        
         .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
         .bg-active { background-color: #d1e7dd; color: #0f5132; }
         .bg-inactive { background-color: #f8d7da; color: #842029; }
-        .form-control:focus { border-color: var(--primary-color); box-shadow: 0 0 0 0.2rem rgba(106, 27, 154, 0.25); }
-
+        
         .custom-search { position: relative; margin-bottom: 20px; }
         .custom-search input { padding-left: 45px; border-radius: 30px; height: 50px; font-size: 1.1rem; border: 2px solid #e0e0e0; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .custom-search input:focus { border-color: var(--primary-color); box-shadow: 0 4px 10px rgba(106, 27, 154, 0.15); }
         .custom-search i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #aaa; font-size: 1.2rem; }
-        .dataTables_filter { display: none; }
+        .dataTables_filter { display: none; } /* ซ่อนช่องค้นหาเดิมของ Datatable */
+        
+        /* ปรับแต่ง Dropdown เลือกจำนวนแถว */
+        .dataTables_length select {
+            border-radius: 20px;
+            padding: 5px 30px 5px 15px;
+            border: 1px solid #ddd;
+        }
+        .dataTables_length { margin-bottom: 15px; }
 
         .view-row { border-bottom: 1px solid #eee; padding: 10px 0; display: flex; }
         .view-label { width: 35%; font-weight: 600; color: #666; }
@@ -89,10 +93,13 @@
                     <i class="fa-solid fa-house"></i> หน้าหลัก
                 </a>
                 <button class="btn btn-warning fw-bold shadow-sm" onclick="openImportModal()">
-                    <i class="fa-solid fa-file-csv"></i> นำเข้า
+                    <i class="fa-solid fa-file-csv"></i> นำเข้าข้อมูลนักเรียน
+                </button>
+                <button class="btn btn-info text-white fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#guideModal">
+                    <i class="fa-solid fa-circle-question"></i> วิธีใช้งาน
                 </button>
                 <button class="btn btn-outline-light rounded-pill px-4" onclick="adminLogout()">
-                    <i class="fa-solid fa-sign-out-alt"></i> ออก
+                    <i class="fa-solid fa-sign-out-alt"></i> ออกจากระบบ
                 </button>
             </div>
         </nav>
@@ -125,19 +132,18 @@
                     <table id="studentTable" class="table table-hover w-100 fs-6">
                         <thead class="bg-light text-primary">
                             <tr>
-                                <th>ปีการศึกษา</th> 
-                                <th>รหัส</th>
-                                <th>บัตร ปชช.</th>
-                                <th>ชื่อ-สกุล (ไทย)</th>
-                                <th>ชื่อเล่น</th>
-                                <th>ห้อง</th>
-                                <th>อีเมล</th>
-                                <th>เบอร์โทร</th>
-                                <th>สถานะ</th>
-                                <th>จัดการ</th>
-                                <th class="d-none">ชื่อ (Eng)</th><th class="d-none">วันเกิด</th><th class="d-none">เลือด</th><th class="d-none">เสื้อ</th>
-                                <th class="d-none">เมลส่วนตัว</th><th class="d-none">Line</th><th class="d-none">Social</th><th class="d-none">ที่อยู่</th>
-                                <th class="d-none">ผู้ปกครอง</th><th class="d-none">เบอร์ผู้ปกครอง</th>
+                                <th>ปีการศึกษา</th> <th>รหัส</th> <th>บัตร ปชช.</th> <th>ชื่อ-สกุล (ไทย)</th>
+                                <th>ชื่อเล่น</th> <th>ห้อง</th> <th>อีเมล</th> <th>เบอร์โทร</th> <th>สถานะ</th> <th>จัดการ</th>
+                                <th class="d-none">ชื่อ (Eng)</th>
+                                <th class="d-none">วันเกิด</th>
+                                <th class="d-none">กรุ๊ปเลือด</th>
+                                <th class="d-none">ไซส์เสื้อ</th>
+                                <th class="d-none">อีเมลส่วนตัว</th>
+                                <th class="d-none">Line ID</th>
+                                <th class="d-none">Social Media</th>
+                                <th class="d-none">ที่อยู่</th>
+                                <th class="d-none">ผู้ปกครอง</th>
+                                <th class="d-none">เบอร์ผู้ปกครอง</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -147,10 +153,7 @@
         </div>
     </div>
 
-    <div class="global-footer">
-        © 2026 Student Council, Muangsuratthani School.<br>
-        Powered by Information Technology Team
-    </div>
+    <div class="global-footer">© 2026 Student Council, Muangsuratthani School.<br>Powered by Information Technology Team</div>
 
     <div class="modal fade" id="importModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
@@ -160,15 +163,21 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="bg-light p-3 rounded mb-3 border">
-                        <label class="fw-bold text-primary mb-2"><i class="fa-solid fa-calendar-check"></i> เลือกปีการศึกษา:</label>
-                        <input type="number" id="importYear" class="form-control fw-bold fs-5 text-center text-primary" style="max-width: 200px;">
+                    <div class="d-flex justify-content-between align-items-end mb-3">
+                        <div class="bg-light p-3 rounded border flex-grow-1 me-3">
+                            <label class="fw-bold text-primary mb-2"><i class="fa-solid fa-calendar-check"></i> เลือกปีการศึกษา:</label>
+                            <input type="number" id="importYear" class="form-control fw-bold fs-5 text-center text-primary" style="max-width: 200px;">
+                        </div>
+                        <button type="button" class="btn btn-outline-success h-100 py-3 fw-bold" onclick="downloadTemplate()">
+                            <i class="fa-solid fa-file-arrow-down"></i> โหลดแบบฟอร์ม (CSV)
+                        </button>
                     </div>
+                    
                     <div class="alert alert-info small">
-                        <b>วิธีใช้งาน:</b> ก๊อปปี้จาก Excel หรือ Google Sheet 2 คอลัมน์ <code>[รหัสนักเรียน]</code> และ <code>[ชื่อ-สกุล]</code><br>
-                        *ระบบจะแยกคำนำหน้าชื่อ และข้ามคนที่รหัสซ้ำให้อัตโนมัติ
+                        <b><i class="fa-solid fa-robot"></i> ระบบนำเข้าอัจฉริยะ (Smart Import):</b><br>
+                        รองรับการก๊อปปี้จาก Excel, Sheets, CSV หรือพิมพ์เอง ขอแค่มี <b>"รหัสนักเรียน 5 หลัก"</b> และ <b>"ชื่อ-สกุล"</b>
                     </div>
-                    <textarea id="importData" class="form-control font-monospace" rows="10" placeholder="12345  นายสภา น่ารัก"></textarea>
+                    <textarea id="importData" class="form-control font-monospace" rows="10" placeholder="ตัวอย่าง: 12345 นายสภา น่ารัก"></textarea>
                     <div class="mt-2 text-end text-muted small" id="lineCount">0 รายการ</div>
                 </div>
                 <div class="modal-footer">
@@ -183,17 +192,16 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title"><i class="fa-solid fa-user-pen"></i> แก้ไขข้อมูลนักเรียน (แก้ไขได้ทุกช่อง)</h5>
+                    <h5 class="modal-title"><i class="fa-solid fa-user-pen"></i> แก้ไขข้อมูลนักเรียน</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body bg-light">
                     <form id="fullEditForm" onsubmit="saveFullEdit(event)">
                         <input type="hidden" id="e_id">
-                        
                         <div class="card mb-3 p-3 border-0 shadow-sm">
                             <h6 class="text-primary fw-bold border-bottom pb-2">1. ข้อมูลหลัก</h6>
                             <div class="row g-3">
-                                <div class="col-md-3"><label class="small text-danger fw-bold">ปีการศึกษา (Admin)</label><input type="number" id="e_academic_year" class="form-control fw-bold text-primary"></div>
+                                <div class="col-md-3"><label class="small text-danger fw-bold">ปีการศึกษา</label><input type="number" id="e_academic_year" class="form-control fw-bold text-primary"></div>
                                 <div class="col-md-3"><label class="small text-muted">รหัสนักเรียน</label><input type="text" id="e_std_id" class="form-control fw-bold" required></div>
                                 <div class="col-md-3"><label class="small text-muted">เลขบัตรปชช.</label><input type="text" id="e_id_card" class="form-control text-primary" maxlength="13"></div>
                                 <div class="col-md-3"><label class="small text-muted">คำนำหน้า</label><input type="text" id="e_prefix" class="form-control"></div>
@@ -201,7 +209,6 @@
                                 <div class="col-md-6"><label class="small text-muted">นามสกุล (ไทย)</label><input type="text" id="e_lname_th" class="form-control" required></div>
                             </div>
                         </div>
-
                         <div class="card mb-3 p-3 border-0 shadow-sm">
                             <h6 class="text-primary fw-bold border-bottom pb-2">2. ข้อมูลส่วนตัว</h6>
                             <div class="row g-3">
@@ -209,28 +216,26 @@
                                 <div class="col-md-3"><label class="small">Surname (En)</label><input type="text" id="e_lname_en" class="form-control uppercase"></div>
                                 <div class="col-md-2"><label class="small">ชื่อเล่น</label><input type="text" id="e_nickname" class="form-control"></div>
                                 <div class="col-md-2"><label class="small">ห้อง</label><input type="text" id="e_room" class="form-control"></div>
-                                <div class="col-md-2"><label class="small">วันเกิด (ISO)</label><input type="date" id="e_birthdate" class="form-control"></div>
+                                <div class="col-md-2"><label class="small">วันเกิด</label><input type="date" id="e_birthdate" class="form-control"></div>
                                 <div class="col-md-2"><label class="small">กรุ๊ปเลือด</label><input type="text" id="e_blood" class="form-control"></div>
                                 <div class="col-md-2"><label class="small">ไซส์เสื้อ</label><input type="text" id="e_shirt" class="form-control"></div>
                             </div>
                         </div>
-
                         <div class="card mb-3 p-3 border-0 shadow-sm">
                             <h6 class="text-primary fw-bold border-bottom pb-2">3. การติดต่อ & ที่อยู่</h6>
                             <div class="row g-3">
-                                <div class="col-md-4"><label class="small text-danger fw-bold">อีเมลโรงเรียน (@mst.ac.th)</label><input type="text" id="e_school_email" class="form-control"></div>
+                                <div class="col-md-4"><label class="small text-danger fw-bold">อีเมลโรงเรียน</label><input type="text" id="e_school_email" class="form-control"></div>
                                 <div class="col-md-4"><label class="small">อีเมลส่วนตัว</label><input type="text" id="e_personal_email" class="form-control"></div>
                                 <div class="col-md-4"><label class="small">เบอร์โทรศัพท์</label><input type="text" id="e_phone" class="form-control"></div>
                                 <div class="col-md-4"><label class="small">Line ID</label><input type="text" id="e_line" class="form-control"></div>
                                 <div class="col-md-8"><label class="small">Social</label><input type="text" id="e_social" class="form-control"></div>
-                                <div class="col-12 mt-3"><label class="small fw-bold">ที่อยู่ (บ้านเลขที่ หมู่ ซอย ถนน)</label><input type="text" id="e_addr_no" class="form-control"></div>
+                                <div class="col-12 mt-3"><label class="small fw-bold">ที่อยู่</label><input type="text" id="e_addr_no" class="form-control"></div>
                                 <div class="col-md-3"><label class="small">ตำบล/แขวง</label><input type="text" id="e_district" class="form-control"></div>
                                 <div class="col-md-3"><label class="small">อำเภอ/เขต</label><input type="text" id="e_amphoe" class="form-control"></div>
                                 <div class="col-md-3"><label class="small">จังหวัด</label><input type="text" id="e_province" class="form-control"></div>
                                 <div class="col-md-3"><label class="small">รหัสไปรษณีย์</label><input type="text" id="e_zipcode" class="form-control"></div>
                             </div>
                         </div>
-
                         <div class="card mb-3 p-3 border-0 shadow-sm">
                             <h6 class="text-primary fw-bold border-bottom pb-2">4. ข้อมูลผู้ปกครอง</h6>
                             <div class="row g-3">
@@ -238,10 +243,9 @@
                                 <div class="col-md-6"><label class="small">เบอร์โทรผู้ปกครอง</label><input type="text" id="e_parent_phone" class="form-control"></div>
                             </div>
                         </div>
-
                         <div class="text-end">
                             <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">ยกเลิก</button>
-                            <button type="submit" class="btn btn-primary px-4 py-2"><i class="fa-solid fa-save"></i> บันทึกการแก้ไขทั้งหมด</button>
+                            <button type="submit" class="btn btn-primary px-4 py-2"><i class="fa-solid fa-save"></i> บันทึก</button>
                         </div>
                     </form>
                 </div>
@@ -288,6 +292,76 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="guideModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title fw-bold"><i class="fa-solid fa-book"></i> วิธีการใช้งานระบบ Admin</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="accordion" id="accordionGuide">
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide1">
+                                <i class="fa-solid fa-file-import me-2 text-warning"></i> 1. การนำเข้าข้อมูล (Import)
+                            </button>
+                        </h2>
+                        <div id="colGuide1" class="accordion-collapse collapse show" data-bs-parent="#accordionGuide">
+                            <div class="accordion-body">
+                                <ul>
+                                    <li>กดปุ่ม <b>"นำเข้า"</b> สีเหลืองที่เมนู</li>
+                                    <li>ระบุ <b>ปีการศึกษา</b> ที่ต้องการนำเข้า (เช่น 2567)</li>
+                                    <li>เตรียมข้อมูลใน Excel หรือ Text File โดยต้องมี 2 ส่วนคือ <code>รหัสนักเรียน 5 หลัก</code> และ <code>ชื่อ-สกุล</code></li>
+                                    <li>ก๊อปปี้และวางในกล่องข้อความ ระบบจะแยก "คำนำหน้า" และ "ชื่อ" ให้อัตโนมัติ (Smart Import)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide2">
+                                <i class="fa-solid fa-users-gear me-2 text-primary"></i> 2. การจัดการข้อมูล
+                            </button>
+                        </h2>
+                        <div id="colGuide2" class="accordion-collapse collapse" data-bs-parent="#accordionGuide">
+                            <div class="accordion-body">
+                                <ul>
+                                    <li><b>ค้นหา:</b> ใช้ช่องค้นหาด้านบน พิมพ์ชื่อ, นามสกุล หรือชื่อเล่น</li>
+                                    <li><b>แก้ไข:</b> กดปุ่ม <i class="fa-solid fa-pen-to-square text-warning"></i> สีเหลือง เพื่อแก้ไขข้อมูลรายคน</li>
+                                    <li><b>ลบ:</b> กดปุ่ม <i class="fa-solid fa-trash text-danger"></i> สีแดง เพื่อลบข้อมูล (ต้องยืนยันก่อนลบ)</li>
+                                    <li><b>ดูรายละเอียด:</b> กดปุ่ม <i class="fa-solid fa-magnifying-glass text-info"></i> สีฟ้า เพื่อดูข้อมูลเชิงลึกทั้งหมด</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide3">
+                                <i class="fa-solid fa-file-excel me-2 text-success"></i> 3. การส่งออกข้อมูล (Export)
+                            </button>
+                        </h2>
+                        <div id="colGuide3" class="accordion-collapse collapse" data-bs-parent="#accordionGuide">
+                            <div class="accordion-body">
+                                <ul>
+                                    <li>กดปุ่ม <b>"Export All (Excel)"</b> สีเขียวเหนือตาราง</li>
+                                    <li>ระบบจะดาวน์โหลดไฟล์ <code>.xlsx</code> ที่มีข้อมูลครบทุกช่อง (รวมถึงช่องที่ซ่อนอยู่ เช่น ชื่ออังกฤษ, ผู้ปกครอง)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+            </div>
+        </div>
+    </div>
+</div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -299,7 +373,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // CONFIG
         const { createClient } = supabase;
         const supabaseUrl = 'https://llbazqwparjaptsjbxxp.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxsYmF6cXdwYXJqYXB0c2pieHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMDk0MDQsImV4cCI6MjA4NDU4NTQwNH0.NcHwvFMnzU6GgHBaud4nNJgwFBK1WQtxAdGbcM-BaYU';
@@ -310,14 +383,14 @@
 
         // AUTH
         $(document).ready(() => {
-            if(localStorage.getItem('mst_admin_session') === 'true') showDashboard();
+            if(sessionStorage.getItem('mst_admin_session') === 'true') showDashboard();
             else $('#login-overlay').show();
         });
 
         function handleAdminLogin(e) {
             e.preventDefault();
             if($('#loginEmail').val().trim() === ADMIN_EMAIL && $('#loginPass').val().trim() === ADMIN_PASS) {
-                localStorage.setItem('mst_admin_session', 'true');
+                sessionStorage.setItem('mst_admin_session', 'true');
                 showDashboard();
             } else Swal.fire('ผิดพลาด', 'ข้อมูลล็อกอินไม่ถูกต้อง', 'error');
         }
@@ -329,7 +402,7 @@
         }
 
         function adminLogout() {
-            localStorage.removeItem('mst_admin_session');
+            sessionStorage.removeItem('mst_admin_session');
             location.reload();
         }
 
@@ -357,28 +430,95 @@
                         render: (d, t, r) => {
                             const row = encodeURIComponent(JSON.stringify(r));
                             return `
-                                <button class="btn btn-info btn-sm text-white" onclick="openView('${row}')" title="ดูข้อมูลละเอียด"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                <button class="btn btn-info btn-sm text-white" onclick="openView('${row}')" title="ดูข้อมูล"><i class="fa-solid fa-magnifying-glass"></i></button>
                                 <button class="btn btn-warning btn-sm" onclick="openEdit('${row}')" title="แก้ไข"><i class="fa-solid fa-pen-to-square"></i></button>
                                 <button class="btn btn-danger btn-sm" onclick="deleteStudent('${r.id}')" title="ลบ"><i class="fa-solid fa-trash"></i></button>
                             `;
                         }
                     },
+                    // Hidden Columns
                     { data: null, visible: false, render: d => `${d.fname_en} ${d.lname_en}` },
-                    { data: 'birthdate', visible: false }, { data: 'blood_type', visible: false },
-                    { data: 'shirt_size', visible: false }, { data: 'personal_email', visible: false },
-                    { data: 'line_id', visible: false }, { data: 'social', visible: false },
-                    { data: 'addr_no', visible: false }, { data: 'parent_name', visible: false },
+                    { data: 'birthdate', visible: false }, 
+                    { data: 'blood_type', visible: false },
+                    { data: 'shirt_size', visible: false }, 
+                    { data: 'personal_email', visible: false },
+                    { data: 'line_id', visible: false }, 
+                    { data: 'social', visible: false },
+                    { data: 'addr_no', visible: false }, 
+                    { data: 'parent_name', visible: false },
                     { data: 'parent_phone', visible: false }
                 ],
-                dom: 'Brtip',
-                buttons: [{ extend: 'excelHtml5', text: '<i class="fa-solid fa-file-excel"></i> Export All', className: 'btn btn-success mb-3', exportOptions: { columns: ':visible, :hidden' }}],
+                // >>>>> UPDATE: ใส่ 'l' (lengthMenu) ไว้หน้าสุดของ dom <<<<<
+                dom: 'lBrtip', 
+                // >>>>> UPDATE: กำหนดตัวเลือกจำนวนแถว <<<<<
+                lengthMenu: [[10, 20, 50, 100, -1], [10, 20, 50, 100, "ทั้งหมด"]],
+                // >>>>> UPDATE: แปลภาษาอังกฤษเป็นไทย <<<<<
+                language: {
+                    lengthMenu: "แสดง _MENU_ รายการ",
+                    info: "แสดง _START_ ถึง _END_ จากทั้งหมด _TOTAL_ รายการ",
+                    paginate: {
+                        first: "หน้าแรก", last: "หน้าสุดท้าย", next: "ถัดไป", previous: "ก่อนหน้า"
+                    },
+                    emptyTable: "ไม่มีข้อมูลในตาราง"
+                },
+                
+                buttons: [{ 
+                    extend: 'excelHtml5', 
+                    text: '<i class="fa-solid fa-file-excel"></i> Export All (Excel)', 
+                    className: 'btn btn-success mb-3 ms-2', 
+                    exportOptions: { 
+                        // เลือกคอลัมน์ที่จะส่งออก (ข้ามเลข 9 ที่เป็นปุ่มจัดการ)
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+                        format: {
+                            header: function (data, columnIdx) {
+                                // เรียงชื่อหัวตารางให้ตรงกับลำดับคอลัมน์เป๊ะๆ (รวมช่องที่ 9 ที่ถูกข้ามด้วย)
+                                const headers = [
+                                    "ปีการศึกษา",       // 0
+                                    "รหัสนักเรียน",     // 1
+                                    "เลขบัตรประชาชน",   // 2
+                                    "ชื่อ-สกุล (ไทย)",  // 3
+                                    "ชื่อเล่น",         // 4
+                                    "ห้อง",            // 5
+                                    "อีเมลโรงเรียน",    // 6
+                                    "เบอร์โทรศัพท์",    // 7
+                                    "สถานะ",           // 8
+                                    "จัดการ",          // 9 (ช่องนี้ไม่ได้ export แต่ใส่ไว้กันตำแหน่งเลื่อน)
+                                    "ชื่อ-สกุล (อังกฤษ)", // 10
+                                    "วันเกิด",          // 11
+                                    "กรุ๊ปเลือด",       // 12
+                                    "ไซส์เสื้อ",        // 13
+                                    "อีเมลส่วนตัว",     // 14
+                                    "Line ID",         // 15
+                                    "Social Media",    // 16
+                                    "ที่อยู่",           // 17
+                                    "ชื่อผู้ปกครอง",     // 18
+                                    "เบอร์ผู้ปกครอง"    // 19
+                                ];
+                                return headers[columnIdx] || data;
+                            }
+                        }
+                    }
+                }],
+                
                 pageLength: 20
             });
 
             $('#searchInput').on('keyup', function() { table.search(this.value).draw(); });
         }
 
-        // IMPORT
+        function downloadTemplate() {
+            const csvContent = "\uFEFFstd_id,full_name\n12345,นายสมชาย ใจดี\n12346,นางสาวสมหญิง รักเรียน";
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "template_student_import.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         function openImportModal() {
             const today = new Date();
             let defaultYear = today.getFullYear() + 543;
@@ -414,29 +554,43 @@
 
             const lines = raw.split('\n');
             const candidates = []; const candidateIds = [];
+            let invalidLines = 0;
+
             lines.forEach(line => {
-                const parts = line.split('\t');
-                if(parts.length >= 2) {
-                    const stdId = parts[0].trim();
-                    const nameObj = splitThaiName(parts[1].trim());
-                    if(stdId && nameObj.fname) {
-                        candidates.push({ std_id: stdId, prefix: nameObj.prefix, fname_th: nameObj.fname, lname_th: nameObj.lname, academic_year: selectedYear });
-                        candidateIds.push(stdId);
-                    }
-                }
+                line = line.trim();
+                if (!line) return;
+                const idMatch = line.match(/(\d{5})/);
+                if (idMatch) {
+                    const stdId = idMatch[0];
+                    let namePart = line.replace(stdId, '').trim();
+                    namePart = namePart.replace(/^[,;\t-]+|[,;\t-]+$/g, '').trim();
+                    if (namePart) {
+                        const nameObj = splitThaiName(namePart);
+                        if (nameObj.fname) {
+                            candidates.push({ std_id: stdId, prefix: nameObj.prefix, fname_th: nameObj.fname, lname_th: nameObj.lname, academic_year: selectedYear });
+                            candidateIds.push(stdId);
+                        } else invalidLines++;
+                    } else invalidLines++;
+                } else invalidLines++;
             });
 
-            if(candidates.length === 0) return Swal.fire('Format ผิด', 'ตรวจสอบข้อมูล (รหัส [Tab] ชื่อสกุล)', 'error');
-            Swal.fire({ title: 'ตรวจสอบ...', didOpen: () => Swal.showLoading() });
+            if(candidates.length === 0) return Swal.fire('ไม่พบข้อมูล', 'โปรดตรวจสอบรูปแบบข้อมูล (ต้องมีรหัส 5 หลัก)', 'error');
+            Swal.fire({ title: 'กำลังตรวจสอบ...', didOpen: () => Swal.showLoading() });
 
             const { data: existingRecords } = await db.from('student_council').select('std_id').in('std_id', candidateIds);
-            const existingSet = new Set(existingRecords.map(r => r.std_id));
+            const existingSet = new Set(existingRecords ? existingRecords.map(r => r.std_id) : []);
+            
             const finalInsert = candidates.filter(c => !existingSet.has(c.std_id));
             const skippedCount = candidates.length - finalInsert.length;
 
-            if (finalInsert.length === 0) return Swal.fire('ข้อมูลซ้ำ', 'ไม่พบข้อมูลใหม่', 'info');
+            if (finalInsert.length === 0) return Swal.fire('ข้อมูลซ้ำทั้งหมด', `มี ${skippedCount} รายการซ้ำในระบบแล้ว`, 'info');
 
-            const confirm = await Swal.fire({ title: `ยืนยันนำเข้า`, html: `ปีการศึกษา: <b>${selectedYear}</b><br>ใหม่: ${finalInsert.length}<br>ซ้ำ: ${skippedCount}`, icon: 'question', showCancelButton: true, confirmButtonText: 'ยืนยัน' });
+            const confirm = await Swal.fire({ 
+                title: `ยืนยันนำเข้า`, 
+                html: `ปีการศึกษา: <b>${selectedYear}</b><br>ข้อมูลใหม่: <b class="text-success">${finalInsert.length}</b><br>ซ้ำ/ข้าม: <b class="text-danger">${skippedCount}</b>` + (invalidLines > 0 ? `<br>อ่านไม่ออก: ${invalidLines}` : ''),
+                icon: 'question', showCancelButton: true, confirmButtonText: 'ยืนยันนำเข้า' 
+            });
+            
             if (!confirm.isConfirmed) return;
 
             const { error: insertError } = await db.from('student_council').insert(finalInsert);
@@ -444,31 +598,20 @@
             else { Swal.fire('สำเร็จ', `บันทึก ${finalInsert.length} รายการ`, 'success'); $('#importModal').modal('hide'); location.reload(); }
         }
 
-        // VIEW DETAIL
         window.openView = function(encodedRow) {
             const r = JSON.parse(decodeURIComponent(encodedRow));
-            $('#v_std_id').text(r.std_id || '-');
-            $('#v_academic_year').text(r.academic_year || '-');
-            $('#v_name_th').text(`${r.prefix || ''} ${r.fname_th} ${r.lname_th}`);
-            $('#v_name_en').text(`${r.fname_en || ''} ${r.lname_en || ''}`);
-            $('#v_nickname').text(r.nickname || '-');
-            $('#v_id_card').text(r.id_card || '-');
-            $('#v_birthdate').text(r.birthdate || '-');
-            $('#v_blood').text(r.blood_type || '-');
-            $('#v_shirt').text(r.shirt_size || '-');
-            $('#v_room').text(r.room ? `ห้อง ${r.room}` : '-');
-            $('#v_phone').text(r.phone || '-');
-            $('#v_school_email').text(r.school_email || '-');
-            $('#v_personal_email').text(r.personal_email || '-');
-            $('#v_line').text(r.line_id || '-');
-            $('#v_social').text(r.social || '-');
-            $('#v_address').text(`${r.addr_no||''} ${r.district||''} ${r.amphoe||''} ${r.province||''} ${r.zipcode||''}`);
-            $('#v_parent_name').text(r.parent_name || '-');
-            $('#v_parent_phone').text(r.parent_phone || '-');
+            $('#v_std_id').text(r.std_id || '-'); $('#v_academic_year').text(r.academic_year || '-');
+            $('#v_name_th').text(`${r.prefix || ''} ${r.fname_th} ${r.lname_th}`); $('#v_name_en').text(`${r.fname_en || ''} ${r.lname_en || ''}`);
+            $('#v_nickname').text(r.nickname || '-'); $('#v_id_card').text(r.id_card || '-');
+            $('#v_birthdate').text(r.birthdate || '-'); $('#v_blood').text(r.blood_type || '-');
+            $('#v_shirt').text(r.shirt_size || '-'); $('#v_room').text(r.room ? `ห้อง ${r.room}` : '-');
+            $('#v_phone').text(r.phone || '-'); $('#v_school_email').text(r.school_email || '-');
+            $('#v_personal_email').text(r.personal_email || '-'); $('#v_line').text(r.line_id || '-');
+            $('#v_social').text(r.social || '-'); $('#v_address').text(`${r.addr_no||''} ${r.district||''} ${r.amphoe||''} ${r.province||''} ${r.zipcode||''}`);
+            $('#v_parent_name').text(r.parent_name || '-'); $('#v_parent_phone').text(r.parent_phone || '-');
             new bootstrap.Modal('#viewModal').show();
         }
 
-        // EDIT & DELETE
         window.openEdit = function(encodedRow) {
             const r = JSON.parse(decodeURIComponent(encodedRow));
             $('#e_id').val(r.id); $('#e_academic_year').val(r.academic_year); 
@@ -509,7 +652,7 @@
             if(res.isConfirmed) {
                 const { error } = await db.from('student_council').delete().eq('id', id);
                 if(error) Swal.fire('ลบไม่ได้', 'ตรวจสอบ Policy', 'error');
-                else { Swal.fire('เรียบร้อย', 'ลบแล้ว', 'success'); setTimeout(() => location.reload(), 1000); }
+                else { Swal.fire('เรียบร้อย', 'ลบข้อมูลแล้ว', 'success'); setTimeout(() => location.reload(), 1000); }
             }
         }
     </script>
