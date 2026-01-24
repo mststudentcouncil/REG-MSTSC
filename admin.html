@@ -1,7 +1,3 @@
-<script>
-    // สั่งให้เด้งไปหน้า maintenance.html ทันที
-    window.location.href = "maintenance.html";
-</script>
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -37,6 +33,10 @@
         }
         .login-box { background: white; padding: 40px; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
 
+        .btn-google { background-color: #fff; border: 1px solid #ddd; color: #333; position: relative; transition: all 0.3s; }
+        .btn-google:hover { background-color: #f8f9fa; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn-google img { width: 20px; margin-right: 10px; }
+
         .global-footer { position: fixed; bottom: 0; left: 0; width: 100%; text-align: center; padding: 15px; font-size: 0.75rem; color: #6c757d; opacity: 0.8; z-index: 10000; pointer-events: none; }
         .admin-nav { background: var(--primary-color); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .admin-nav .logo { height: 40px; margin-right: 10px; border-radius: 50%; border: 2px solid var(--secondary-color); }
@@ -50,14 +50,9 @@
         .custom-search input { padding-left: 45px; border-radius: 30px; height: 50px; font-size: 1.1rem; border: 2px solid #e0e0e0; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .custom-search input:focus { border-color: var(--primary-color); box-shadow: 0 4px 10px rgba(106, 27, 154, 0.15); }
         .custom-search i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #aaa; font-size: 1.2rem; }
-        .dataTables_filter { display: none; } /* ซ่อนช่องค้นหาเดิมของ Datatable */
+        .dataTables_filter { display: none; }
         
-        /* ปรับแต่ง Dropdown เลือกจำนวนแถว */
-        .dataTables_length select {
-            border-radius: 20px;
-            padding: 5px 30px 5px 15px;
-            border: 1px solid #ddd;
-        }
+        .dataTables_length select { border-radius: 20px; padding: 5px 30px 5px 15px; border: 1px solid #ddd; }
         .dataTables_length { margin-bottom: 15px; }
 
         .view-row { border-bottom: 1px solid #eee; padding: 10px 0; display: flex; }
@@ -65,7 +60,6 @@
         .view-val { width: 65%; color: #333; font-weight: 500; }
         .modal-header-view { background: linear-gradient(135deg, #17a2b8, #117a8b); color: white; }
 
-        /* Mobile specific adjustments */
         @media (max-width: 767.98px) {
             .container-fluid { padding: 15px; }
             .admin-nav .logo { height: 35px; }
@@ -77,14 +71,16 @@
     <div id="login-overlay">
         <div class="login-box">
             <img src="https://i.postimg.cc/yxjxZmRN/Logo-mstsc-(1)-(1).png" width="90" class="mb-3 rounded-circle border border-warning border-3">
-            <h4 class="fw-bold text-dark mb-3">ADMIN REG - MSTSC</h4>
-            <form onsubmit="handleAdminLogin(event)">
-                <input type="email" id="loginEmail" class="form-control mb-3" placeholder="admin@mst.ac.th" required>
-                <input type="password" id="loginPass" class="form-control mb-4" placeholder="Password" required>
-                <button type="submit" class="btn btn-warning w-100 fw-bold shadow-sm mb-3">เข้าสู่ระบบ</button>
-            </form>
+            <h4 class="fw-bold text-dark mb-2">ADMIN REG - MSTSC</h4>
+            <p class="text-muted small mb-4">สำหรับผู้ดูแลระบบคณะกรรมการสภานักเรียนเท่านั้น</p>
+            
+            <button onclick="loginWithGoogle()" class="btn btn-google w-100 py-2 fw-bold rounded-pill mb-3">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
+                เข้าสู่ระบบด้วย Google
+            </button>
+
             <a href="index.html" class="btn btn-link text-decoration-none text-muted small">
-                <i class="fa-solid fa-arrow-left"></i> กลับหน้าหลัก
+                <i class="fa-solid fa-arrow-left"></i> ย้อนกลับหน้าหลัก
             </a>
         </div>
     </div>
@@ -95,8 +91,8 @@
                 <img src="https://i.postimg.cc/yxjxZmRN/Logo-mstsc-(1)-(1).png" class="logo">
                 <div>
                     <div class="fw-bold fs-5 d-none d-md-block">ระบบจัดการข้อมูลคณะกรรมการสภานักเรียนโรงเรียนเมืองสุราษฎร์ธานี</div>
-                    <div class="fw-bold fs-6 d-md-none">REG - MSTSC</div>
-                    <small class="text-warning opacity-75">Admin Mode</small>
+                    <div class="fw-bold fs-6 d-md-none">Admin Panel</div>
+                    <small class="text-warning opacity-75" id="userEmailDisplay">Admin Mode</small>
                 </div>
             </div>
             <div class="d-flex gap-2">
@@ -303,76 +299,73 @@
             </div>
         </div>
     </div>
+    
     <div class="modal fade" id="guideModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-info text-white">
-                <h5 class="modal-title fw-bold"><i class="fa-solid fa-book"></i> วิธีการใช้งานระบบ Admin</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="accordion" id="accordionGuide">
-                    
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide1">
-                                <i class="fa-solid fa-file-import me-2 text-warning"></i> 1. การนำเข้าข้อมูล (Import)
-                            </button>
-                        </h2>
-                        <div id="colGuide1" class="accordion-collapse collapse show" data-bs-parent="#accordionGuide">
-                            <div class="accordion-body">
-                                <ul>
-                                    <li>กดปุ่ม <b>"นำเข้า"</b> สีเหลืองที่เมนู</li>
-                                    <li>ระบุ <b>ปีการศึกษา</b> ที่ต้องการนำเข้า (เช่น 2567)</li>
-                                    <li>เตรียมข้อมูลใน Excel หรือ Text File โดยต้องมี 2 ส่วนคือ <code>รหัสนักเรียน 5 หลัก</code> และ <code>ชื่อ-สกุล</code></li>
-                                    <li>ก๊อปปี้และวางในกล่องข้อความ ระบบจะแยก "คำนำหน้า" และ "ชื่อ" ให้อัตโนมัติ (Smart Import)</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide2">
-                                <i class="fa-solid fa-users-gear me-2 text-primary"></i> 2. การจัดการข้อมูล
-                            </button>
-                        </h2>
-                        <div id="colGuide2" class="accordion-collapse collapse" data-bs-parent="#accordionGuide">
-                            <div class="accordion-body">
-                                <ul>
-                                    <li><b>ค้นหา:</b> ใช้ช่องค้นหาด้านบน พิมพ์ชื่อ, นามสกุล หรือชื่อเล่น</li>
-                                    <li><b>แก้ไข:</b> กดปุ่ม <i class="fa-solid fa-pen-to-square text-warning"></i> สีเหลือง เพื่อแก้ไขข้อมูลรายคน</li>
-                                    <li><b>ลบ:</b> กดปุ่ม <i class="fa-solid fa-trash text-danger"></i> สีแดง เพื่อลบข้อมูล (ต้องยืนยันก่อนลบ)</li>
-                                    <li><b>ดูรายละเอียด:</b> กดปุ่ม <i class="fa-solid fa-magnifying-glass text-info"></i> สีฟ้า เพื่อดูข้อมูลเชิงลึกทั้งหมด</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide3">
-                                <i class="fa-solid fa-file-excel me-2 text-success"></i> 3. การส่งออกข้อมูล (Export)
-                            </button>
-                        </h2>
-                        <div id="colGuide3" class="accordion-collapse collapse" data-bs-parent="#accordionGuide">
-                            <div class="accordion-body">
-                                <ul>
-                                    <li>กดปุ่ม <b>"Export All (Excel)"</b> สีเขียวเหนือตาราง</li>
-                                    <li>ระบบจะดาวน์โหลดไฟล์ <code>.xlsx</code> ที่มีข้อมูลครบทุกช่อง (รวมถึงช่องที่ซ่อนอยู่ เช่น ชื่ออังกฤษ, ผู้ปกครอง)</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-book"></i> วิธีการใช้งานระบบ Admin</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                <div class="modal-body">
+                    <div class="accordion" id="accordionGuide">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide1">
+                                    <i class="fa-solid fa-file-import me-2 text-warning"></i> 1. การนำเข้าข้อมูล (Import)
+                                </button>
+                            </h2>
+                            <div id="colGuide1" class="accordion-collapse collapse show" data-bs-parent="#accordionGuide">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li>กดปุ่ม <b>"นำเข้า"</b> สีเหลืองที่เมนู</li>
+                                        <li>ระบุ <b>ปีการศึกษา</b> ที่ต้องการนำเข้า (เช่น 2567)</li>
+                                        <li>เตรียมข้อมูลใน Excel หรือ Text File โดยต้องมี 2 ส่วนคือ <code>รหัสนักเรียน 5 หลัก</code> และ <code>ชื่อ-สกุล</code></li>
+                                        <li>ก๊อปปี้และวางในกล่องข้อความ ระบบจะแยก "คำนำหน้า" และ "ชื่อ" ให้อัตโนมัติ (Smart Import)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide2">
+                                    <i class="fa-solid fa-users-gear me-2 text-primary"></i> 2. การจัดการข้อมูล
+                                </button>
+                            </h2>
+                            <div id="colGuide2" class="accordion-collapse collapse" data-bs-parent="#accordionGuide">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li><b>ค้นหา:</b> ใช้ช่องค้นหาด้านบน พิมพ์ชื่อ, นามสกุล หรือชื่อเล่น</li>
+                                        <li><b>แก้ไข:</b> กดปุ่ม <i class="fa-solid fa-pen-to-square text-warning"></i> สีเหลือง เพื่อแก้ไขข้อมูลรายคน</li>
+                                        <li><b>ลบ:</b> กดปุ่ม <i class="fa-solid fa-trash text-danger"></i> สีแดง เพื่อลบข้อมูล (ต้องยืนยันก่อนลบ)</li>
+                                        <li><b>ดูรายละเอียด:</b> กดปุ่ม <i class="fa-solid fa-magnifying-glass text-info"></i> สีฟ้า เพื่อดูข้อมูลเชิงลึกทั้งหมด</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide3">
+                                    <i class="fa-solid fa-file-excel me-2 text-success"></i> 3. การส่งออกข้อมูล (Export)
+                                </button>
+                            </h2>
+                            <div id="colGuide3" class="accordion-collapse collapse" data-bs-parent="#accordionGuide">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li>กดปุ่ม <b>"Export All (Excel)"</b> สีเขียวเหนือตาราง</li>
+                                        <li>ระบบจะดาวน์โหลดไฟล์ <code>.xlsx</code> ที่มีข้อมูลครบทุกช่อง (รวมถึงช่องที่ซ่อนอยู่ เช่น ชื่ออังกฤษ, ผู้ปกครอง)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -388,34 +381,83 @@
         const supabaseUrl = 'https://llbazqwparjaptsjbxxp.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxsYmF6cXdwYXJqYXB0c2pieHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMDk0MDQsImV4cCI6MjA4NDU4NTQwNH0.NcHwvFMnzU6GgHBaud4nNJgwFBK1WQtxAdGbcM-BaYU';
         const db = createClient(supabaseUrl, supabaseKey);
+        
+        // รายชื่ออีเมลที่อนุญาตให้เข้าใช้งาน
+        const ALLOWED_EMAILS = [
+    'studentcouncil@mst.ac.th',
+    '6829903@mst.ac.th',
+    'tassanee@mst.ac.th',
+    'admin.it@mst.ac.th' 
+    // เพิ่มได้เรื่อยๆ ครับ
+        ];
+    
 
-        const ADMIN_EMAIL = 'studentcouncil@mst.ac.th';
-        const ADMIN_PASS = '077285686';
+        // ================= AUTHENTICATION LOGIC (NEW) =================
+        $(document).ready(async () => {
+            // เช็คว่ามี Session ค้างอยู่ไหม
+            const { data: { session } } = await db.auth.getSession();
+            
+            if (session) {
+                checkUserAndRedirect(session.user);
+            } else {
+                $('#login-overlay').show(); // แสดงหน้า Login
+            }
 
-        // AUTH
-        $(document).ready(() => {
-            if(sessionStorage.getItem('mst_admin_session') === 'true') showDashboard();
-            else $('#login-overlay').show();
+            // ฟัง Event เมื่อมีการล็อกอินกลับมาจาก Google
+            db.auth.onAuthStateChange((event, session) => {
+                if (event === 'SIGNED_IN' && session) {
+                    checkUserAndRedirect(session.user);
+                } else if (event === 'SIGNED_OUT') {
+                    $('#admin-content').hide();
+                    $('#login-overlay').fadeIn();
+                }
+            });
         });
 
-        function handleAdminLogin(e) {
-            e.preventDefault();
-            if($('#loginEmail').val().trim() === ADMIN_EMAIL && $('#loginPass').val().trim() === ADMIN_PASS) {
-                sessionStorage.setItem('mst_admin_session', 'true');
-                showDashboard();
-            } else Swal.fire('ผิดพลาด', 'ข้อมูลล็อกอินไม่ถูกต้อง', 'error');
+        // ฟังก์ชันล็อกอินด้วย Google
+        // ฟังก์ชันล็อกอินด้วย Google (ปรับปรุงใหม่)
+        async function loginWithGoogle() {
+            const { data, error } = await db.auth.signInWithOAuth({
+                provider: 'google',
+                options: { 
+                    queryParams: { access_type: 'offline', prompt: 'consent' },
+                    // บรรทัดนี้สำคัญ! สั่งให้เด้งกลับมาที่หน้าปัจจุบัน (admin.html) ไม่ใช่หน้า index
+                    redirectTo: window.location.href 
+                }
+            });
+            if (error) Swal.fire('Error', error.message, 'error');
         }
 
-        function showDashboard() {
-            $('#login-overlay').fadeOut();
-            $('#admin-content').fadeIn();
-            initTable();
+        // ฟังก์ชันตรวจสอบอีเมล (รองรับหลายคน)
+        function checkUserAndRedirect(user) {
+            const email = user.email;
+            
+            // เช็คว่าอีเมลของคนที่ล็อกอิน มีอยู่ในรายการ ALLOWED_EMAILS หรือไม่
+            if (ALLOWED_EMAILS.includes(email)) {
+                // อีเมลถูกต้อง -> เข้าสู่ระบบ
+                $('#userEmailDisplay').text(email);
+                $('#login-overlay').fadeOut();
+                $('#admin-content').fadeIn();
+                initTable();
+            } else {
+                // อีเมลผิด -> แจ้งเตือนและดีดออก
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เข้าสู่ระบบไม่ได้',
+                    html: `อีเมล <b>${email}</b> ไม่มีสิทธิ์เข้าถึงระบบ Admin`,
+                    confirmButtonText: 'ตกลง',
+                    allowOutsideClick: false
+                }).then(() => {
+                    db.auth.signOut();
+                });
+            }
         }
 
-        function adminLogout() {
-            sessionStorage.removeItem('mst_admin_session');
-            location.reload();
+        async function adminLogout() {
+            const { error } = await db.auth.signOut();
+            if(!error) location.reload();
         }
+        // ================= END AUTH =================
 
         // TABLE
         let table;
@@ -447,7 +489,6 @@
                             `;
                         }
                     },
-                    // Hidden Columns
                     { data: null, visible: false, render: d => `${d.fname_en} ${d.lname_en}` },
                     { data: 'birthdate', visible: false }, 
                     { data: 'blood_type', visible: false },
@@ -459,64 +500,39 @@
                     { data: 'parent_name', visible: false },
                     { data: 'parent_phone', visible: false }
                 ],
-                // >>>>> UPDATE: ใส่ 'l' (lengthMenu) ไว้หน้าสุดของ dom <<<<<
                 dom: 'lBrtip', 
-                // >>>>> UPDATE: กำหนดตัวเลือกจำนวนแถว <<<<<
                 lengthMenu: [[10, 20, 50, 100, -1], [10, 20, 50, 100, "ทั้งหมด"]],
-                // >>>>> UPDATE: แปลภาษาอังกฤษเป็นไทย <<<<<
                 language: {
                     lengthMenu: "แสดง _MENU_ รายการ",
                     info: "แสดง _START_ ถึง _END_ จากทั้งหมด _TOTAL_ รายการ",
-                    paginate: {
-                        first: "หน้าแรก", last: "หน้าสุดท้าย", next: "ถัดไป", previous: "ก่อนหน้า"
-                    },
+                    paginate: { first: "หน้าแรก", last: "หน้าสุดท้าย", next: "ถัดไป", previous: "ก่อนหน้า" },
                     emptyTable: "ไม่มีข้อมูลในตาราง"
                 },
-                
                 buttons: [{ 
                     extend: 'excelHtml5', 
                     text: '<i class="fa-solid fa-file-excel"></i> Export All (Excel)', 
                     className: 'btn btn-success mb-3 ms-2', 
                     exportOptions: { 
-                        // เลือกคอลัมน์ที่จะส่งออก (ข้ามเลข 9 ที่เป็นปุ่มจัดการ)
                         columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
                         format: {
                             header: function (data, columnIdx) {
-                                // เรียงชื่อหัวตารางให้ตรงกับลำดับคอลัมน์เป๊ะๆ (รวมช่องที่ 9 ที่ถูกข้ามด้วย)
                                 const headers = [
-                                    "ปีการศึกษา",       // 0
-                                    "รหัสนักเรียน",     // 1
-                                    "เลขบัตรประชาชน",   // 2
-                                    "ชื่อ-สกุล (ไทย)",  // 3
-                                    "ชื่อเล่น",         // 4
-                                    "ห้อง",            // 5
-                                    "อีเมลโรงเรียน",    // 6
-                                    "เบอร์โทรศัพท์",    // 7
-                                    "สถานะ",           // 8
-                                    "จัดการ",          // 9 (ช่องนี้ไม่ได้ export แต่ใส่ไว้กันตำแหน่งเลื่อน)
-                                    "ชื่อ-สกุล (อังกฤษ)", // 10
-                                    "วันเกิด",          // 11
-                                    "กรุ๊ปเลือด",        // 12
-                                    "ไซส์เสื้อ",        // 13
-                                    "อีเมลส่วนตัว",      // 14
-                                    "Line ID",         // 15
-                                    "Social Media",    // 16
-                                    "ที่อยู่",           // 17
-                                    "ชื่อผู้ปกครอง",      // 18
-                                    "เบอร์ผู้ปกครอง"    // 19
+                                    "ปีการศึกษา", "รหัสนักเรียน", "เลขบัตรประชาชน", "ชื่อ-สกุล (ไทย)", "ชื่อเล่น", "ห้อง",
+                                    "อีเมลโรงเรียน", "เบอร์โทรศัพท์", "สถานะ", "จัดการ", "ชื่อ-สกุล (อังกฤษ)", "วันเกิด",
+                                    "กรุ๊ปเลือด", "ไซส์เสื้อ", "อีเมลส่วนตัว", "Line ID", "Social Media", "ที่อยู่",
+                                    "ชื่อผู้ปกครอง", "เบอร์ผู้ปกครอง"
                                 ];
                                 return headers[columnIdx] || data;
                             }
                         }
                     }
                 }],
-                
                 pageLength: 20
             });
-
             $('#searchInput').on('keyup', function() { table.search(this.value).draw(); });
         }
 
+        // Functions for Import/Edit/Delete (Same as before)
         function downloadTemplate() {
             const csvContent = "\uFEFFstd_id,full_name\n12345,นายสมชาย ใจดี\n12346,นางสาวสมหญิง รักเรียน";
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
