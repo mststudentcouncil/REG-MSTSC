@@ -64,6 +64,55 @@
             .container-fluid { padding: 15px; }
             .admin-nav .logo { height: 35px; }
         }
+        /* สำหรับหน้าจอมือถือ (กว้างไม่เกิน 768px) */
+@media screen and (max-width: 768px) {
+    
+    /* 1. ปรับขนาดพื้นฐานของทั้งหน้า */
+    body, p, span, li, a {
+        font-size: 14px !important; /* ลดจากปกติที่มักจะเป็น 16px */
+        line-height: 1.5; /* เพิ่มระยะห่างบรรทัดให้อ่านง่ายขึ้นในจอเล็ก */
+    }
+
+    /* 2. ปรับหัวข้อ (Headings) ไม่ให้ใหญ่คับจอ */
+    h1 { font-size: 24px !important; }
+    h2 { font-size: 20px !important; }
+    h3 { font-size: 18px !important; }
+    h4, h5, h6 { font-size: 16px !important; }
+
+    /* 3. ปรับขนาด Input, ปุ่ม และ Form ในหน้า Admin/Login */
+    input, select, textarea, button, .btn {
+        font-size: 14px !important; 
+        padding: 8px 12px; /* ปรับ Padding ให้กดง่ายขึ้นแต่ไม่กินที่ */
+        height: auto; /* ป้องกันการกำหนดความสูงตายตัวที่อาจทำให้ตัวอักษรตก */
+    }
+
+    /* 4. ปรับตาราง (Table) ในหน้า Admin */
+    /* ตารางมักจะมีปัญหาที่สุดในมือถือ ให้ลดขนาดตัวอักษรลงอีกนิด */
+    table th, table td {
+        font-size: 12px !important;
+        padding: 5px !important;
+    }
+}
+@media screen and (max-width: 768px) {
+    /* ปรับกล่อง Login */
+    .login-container, .login-box, .card {
+        width: 90% !important; /* ให้กว้างเกือบเต็มจอ */
+        margin: 20px auto; /* จัดกึ่งกลาง */
+        padding: 15px !important; /* ลดพื้นที่ว่างด้านใน */
+    }
+
+    /* ปรับ Title ของหน้า Login */
+    .login-header h1, .login-title {
+        font-size: 22px !important;
+        margin-bottom: 15px;
+    }
+
+    /* ปรับช่องกรอก Username/Password ให้เต็มความกว้าง */
+    .login-form input {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
     </style>
 </head>
 <body>
