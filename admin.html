@@ -21,9 +21,15 @@
         body { font-family: 'Prompt', sans-serif; background-color: var(--bg-color); padding-bottom: 60px; }
 
         /* Z-Index Fixes */
-        .swal2-container { z-index: 20000 !important; }
-        .modal-backdrop { z-index: 1040 !important; }
-        .modal { z-index: 1050 !important; }
+.swal2-container { z-index: 30000 !important; } 
+.modal-backdrop { z-index: 1040 !important; }
+.modal { z-index: 1050 !important; }
+
+/* เพิ่มบรรทัดนี้เพื่อความชัวร์ */
+.swal2-input {
+    z-index: 30001 !important;
+}
+        
 
         #login-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
@@ -120,9 +126,11 @@
     <div id="login-overlay">
         <div class="login-box">
             <img src="https://i.postimg.cc/yxjxZmRN/Logo-mstsc-(1)-(1).png" width="90" class="mb-3 rounded-circle border border-warning border-3">
-            <h4 class="fw-bold text-dark mb-2">ADMIN - MSTSC</h4>
-            <p class="text-muted small mb-4">สำหรับผู้ดูแลระบบเท่านั้น</p>
-            
+            <h4 class="fw-bold text-dark mb-2">ADMIN REG - MSTSC</h4>
+            <p class="text-muted small mb-4">สำหรับผู้ดูแลระบบคณะกรรมการสภานักเรียนเท่านั้น</p>
+            <p class="text-primary small mb-4" style="font-size: 0.8rem;">
+        <i class="fa-solid fa-shield-check"></i> ข้อมูลนักเรียนจะถูกจัดเก็บในระบบเป็นเวลา 5 ปีการศึกษา
+    </p>
             <button onclick="loginWithGoogle()" class="btn btn-google w-100 py-2 fw-bold rounded-pill mb-3">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
                 เข้าสู่ระบบด้วย @mst.ac.th
@@ -151,6 +159,9 @@
                 <button class="btn btn-warning fw-bold shadow-sm" onclick="openImportModal()" title="นำเข้าข้อมูล">
                     <i class="fa-solid fa-file-csv"></i> <span class="d-none d-md-inline">นำเข้าข้อมูลนักเรียน</span>
                 </button>
+                <button class="btn btn-danger fw-bold shadow-sm" onclick="openDeleteYearModal()" title="ลบข้อมูลรายปี">
+    <i class="fa-solid fa-calendar-minus"></i> <span class="d-none d-md-inline">ลบข้อมูลรายปี</span>
+</button>
                 <button class="btn btn-info text-white fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#guideModal" title="วิธีใช้งาน">
                     <i class="fa-solid fa-circle-question"></i> <span class="d-none d-md-inline">วิธีใช้งาน</span>
                 </button>
@@ -162,6 +173,15 @@
 
         <div class="container-fluid">
             
+           <div id="autoDeleteAlert" class="alert alert-warning border-warning shadow-sm d-none align-items-center mb-3" role="alert">
+    <i class="fa-solid fa-clock-rotate-left fs-3 me-3"></i>
+    <div class="flex-grow-1">
+        <strong class="text-dark">นโยบายการจัดเก็บข้อมูล:</strong> 
+        <span class="text-primary fw-bold">ข้อมูลของนักเรียนทุกคนจะถูกเก็บไว้เป็นเวลา 5 ปีการศึกษา</span> 
+        <br>ขณะนี้พบข้อมูลของ <span id="expiringYears" class="badge bg-danger">กำลังคำนวณ...</span> ที่ครบกำหนดแล้วและจะถูกลบอัตโนมัติ
+    </div>
+</div>
+    
             <div class="alert alert-danger border-danger shadow-sm d-flex align-items-center mb-4" role="alert">
                 <i class="fa-solid fa-shield-halved fs-2 me-3"></i>
                 <div>
@@ -348,73 +368,118 @@
             </div>
         </div>
     </div>
-    
-    <div class="modal fade" id="guideModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-info text-white">
-                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-book"></i> วิธีการใช้งานระบบ Admin</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    <div class="modal fade" id="deleteYearModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title fw-bold"><i class="fa-solid fa-triangle-exclamation"></i> ลบข้อมูลรายปี</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <label class="fw-bold mb-2">เลือกปีการศึกษาที่ต้องการลบ:</label>
+                <select id="deleteYearSelect" class="form-select fw-bold text-danger border-danger">
+                    </select>
+                <div class="alert alert-warning mt-3 mb-0 small">
+                    <i class="fa-solid fa-circle-info"></i> ข้อมูลนักเรียนทั้งหมดในปีที่เลือกจะถูกลบออกถาวร
                 </div>
-                <div class="modal-body">
-                    <div class="accordion" id="accordionGuide">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide1">
-                                    <i class="fa-solid fa-file-import me-2 text-warning"></i> 1. การนำเข้าข้อมูล (Import)
-                                </button>
-                            </h2>
-                            <div id="colGuide1" class="accordion-collapse collapse show" data-bs-parent="#accordionGuide">
-                                <div class="accordion-body">
-                                    <ul>
-                                        <li>กดปุ่ม <b>"นำเข้า"</b> สีเหลืองที่เมนู</li>
-                                        <li>ระบุ <b>ปีการศึกษา</b> ที่ต้องการนำเข้า (เช่น 2567)</li>
-                                        <li>เตรียมข้อมูลใน Excel หรือ Text File โดยต้องมี 2 ส่วนคือ <code>รหัสนักเรียน 5 หลัก</code> และ <code>ชื่อ-สกุล</code></li>
-                                        <li>ก๊อปปี้และวางในกล่องข้อความ ระบบจะแยก "คำนำหน้า" และ "ชื่อ" ให้อัตโนมัติ (Smart Import)</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide2">
-                                    <i class="fa-solid fa-users-gear me-2 text-primary"></i> 2. การจัดการข้อมูล
-                                </button>
-                            </h2>
-                            <div id="colGuide2" class="accordion-collapse collapse" data-bs-parent="#accordionGuide">
-                                <div class="accordion-body">
-                                    <ul>
-                                        <li><b>ค้นหา:</b> ใช้ช่องค้นหาด้านบน พิมพ์ชื่อ, นามสกุล หรือชื่อเล่น</li>
-                                        <li><b>แก้ไข:</b> กดปุ่ม <i class="fa-solid fa-pen-to-square text-warning"></i> สีเหลือง เพื่อแก้ไขข้อมูลรายคน</li>
-                                        <li><b>ลบ:</b> กดปุ่ม <i class="fa-solid fa-trash text-danger"></i> สีแดง เพื่อลบข้อมูล (ต้องยืนยันก่อนลบ)</li>
-                                        <li><b>ดูรายละเอียด:</b> กดปุ่ม <i class="fa-solid fa-magnifying-glass text-info"></i> สีฟ้า เพื่อดูข้อมูลเชิงลึกทั้งหมด</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide3">
-                                    <i class="fa-solid fa-file-excel me-2 text-success"></i> 3. การส่งออกข้อมูล (Export)
-                                </button>
-                            </h2>
-                            <div id="colGuide3" class="accordion-collapse collapse" data-bs-parent="#accordionGuide">
-                                <div class="accordion-body">
-                                    <ul>
-                                        <li>กดปุ่ม <b>"Export All (Excel)"</b> สีเขียวเหนือตาราง</li>
-                                        <li>ระบบจะดาวน์โหลดไฟล์ <code>.xlsx</code> ที่มีข้อมูลครบทุกช่อง (รวมถึงช่องที่ซ่อนอยู่ เช่น ชื่ออังกฤษ, ผู้ปกครอง)</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                <button type="button" class="btn btn-danger" onclick="processDeleteYear()">ยืนยันการลบ</button>
             </div>
         </div>
     </div>
+</div>
+    
+    <div class="modal fade" id="guideModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title fw-bold"><i class="fa-solid fa-book"></i> วิธีการใช้งานระบบ Admin</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="accordion" id="accordionGuide">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide1">
+                                <i class="fa-solid fa-file-import me-2 text-warning"></i> 1. การนำเข้าข้อมูล (Import)
+                            </button>
+                        </h2>
+                        <div id="colGuide1" class="accordion-collapse collapse show" data-bs-parent="#accordionGuide">
+                            <div class="accordion-body">
+                                <ul>
+                                    <li>กดปุ่ม <b>"นำเข้า"</b> สีเหลืองที่เมนู</li>
+                                    <li>ระบุ <b>ปีการศึกษา</b> ที่ต้องการนำเข้า (เช่น 2567)</li>
+                                    <li>เตรียมข้อมูลใน Excel หรือ Text File โดยต้องมี 2 ส่วนคือ <code>รหัสนักเรียน 5 หลัก</code> และ <code>ชื่อ-สกุล</code></li>
+                                    <li>ก๊อปปี้และวางในกล่องข้อความ ระบบจะแยก "คำนำหน้า" และ "ชื่อ" ให้อัตโนมัติ (Smart Import)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide2">
+                                <i class="fa-solid fa-users-gear me-2 text-primary"></i> 2. การจัดการข้อมูล
+                            </button>
+                        </h2>
+                        <div id="colGuide2" class="accordion-collapse collapse" data-bs-parent="#accordionGuide">
+                            <div class="accordion-body">
+                                <ul>
+                                    <li><b>ค้นหา:</b> ใช้ช่องค้นหาด้านบน พิมพ์ชื่อ, นามสกุล หรือชื่อเล่น</li>
+                                    <li><b>แก้ไข:</b> กดปุ่ม <i class="fa-solid fa-pen-to-square text-warning"></i> สีเหลือง เพื่อแก้ไขข้อมูลรายคน</li>
+                                    <li><b>ลบ:</b> กดปุ่ม <i class="fa-solid fa-trash text-danger"></i> สีแดง เพื่อลบข้อมูล (ต้องยืนยันก่อนลบ)</li>
+                                    <li><b>ดูรายละเอียด:</b> กดปุ่ม <i class="fa-solid fa-magnifying-glass text-info"></i> สีฟ้า เพื่อดูข้อมูลเชิงลึกทั้งหมด</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide3">
+                                <i class="fa-solid fa-file-excel me-2 text-success"></i> 3. การส่งออกข้อมูล (Export)
+                            </button>
+                        </h2>
+                        <div id="colGuide3" class="accordion-collapse collapse" data-bs-parent="#accordionGuide">
+                            <div class="accordion-body">
+                                <ul>
+                                    <li>กดปุ่ม <b>"Export All (Excel)"</b> สีเขียวเหนือตาราง</li>
+                                    <li>ระบบจะดาวน์โหลดไฟล์ <code>.xlsx</code> ที่มีข้อมูลครบทุกช่อง (รวมถึงช่องที่ซ่อนอยู่ เช่น ชื่ออังกฤษ, ผู้ปกครอง)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+    <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide4">
+            <i class="fa-solid fa-calendar-minus me-2 text-danger"></i> 4. การลบข้อมูลรายปี (Delete by Year)
+        </button>
+    </h2>
+    <div id="colGuide4" class="accordion-collapse collapse" data-bs-parent="#accordionGuide">
+        <div class="accordion-body">
+            <div class="p-2 mb-3 bg-light border-start border-4 border-info rounded">
+                <i class="fa-solid fa-info-circle text-info"></i> <b>นโยบายระบบ:</b> ข้อมูลของนักเรียนทุกคนจะถูกเก็บไว้ในระบบเป็นเวลา <b>5 ปีการศึกษา</b> และจะมีการทำความสะอาดข้อมูลเก่าโดยอัตโนมัติ
+            </div>
+            
+            <ul class="mb-0">
+                <li>กดปุ่ม <b>"ลบข้อมูลรายปี"</b> เพื่อลบปีที่ต้องการด้วยตนเอง</li>
+                <li>พิมพ์รหัสยืนยันเพื่อความปลอดภัยก่อนลบข้อมูลถาวร</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+            </div>
+        </div>
+    </div>
+</div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -512,6 +577,9 @@
         let table;
         async function initTable() {
             if ($.fn.DataTable.isDataTable('#studentTable')) return;
+            if ($.fn.DataTable.isDataTable('#studentTable')) {
+        return; 
+    }
             const { data, error } = await db.from('student_council').select('*').order('std_id', { ascending: true });
             if(error) return console.error(error);
 
@@ -578,6 +646,32 @@
                 }],
                 pageLength: 20
             });
+            async function checkExpiringData() {
+    const currentYearTH = new Date().getFullYear() + 543;
+    const expiryThreshold = currentYearTH - 5; // เกณฑ์ 5 ปี
+
+    // ดึงรายการปีการศึกษาที่มีอยู่ในระบบมาตรวจสอบ
+    const { data, error } = await db
+        .from('student_council')
+        .select('academic_year')
+        .lte('academic_year', expiryThreshold); // กรองเอาเฉพาะปีที่เก่ากว่าหรือเท่ากับเกณฑ์
+
+    if (data && data.length > 0) {
+        // หาปีที่เก่าที่สุดและใหม่ที่สุดที่จะโดนลบ
+        const years = [...new Set(data.map(item => item.academic_year))].sort();
+        
+        if (years.length > 0) {
+            $('#expiringYears').text('ปีการศึกษา ' + years.join(', '));
+            $('#autoDeleteAlert').removeClass('d-none').addClass('d-flex');
+        }
+    }
+}
+
+// เรียกใช้งานฟังก์ชัน
+$(document).ready(function() {
+    // รอให้ตารางโหลดเสร็จก่อนค่อยเช็ค (หรือเรียกต่อจาก initTable)
+    setTimeout(checkExpiringData, 2000);
+});
             $('#searchInput').on('keyup', function() { table.search(this.value).draw(); });
         }
 
@@ -731,6 +825,84 @@
                 else { Swal.fire('เรียบร้อย', 'ลบข้อมูลแล้ว', 'success'); setTimeout(() => location.reload(), 1000); }
             }
         }
+        // ฟังก์ชันเปิด Modal และดึงรายการปีที่มีอยู่ในระบบมาแสดงใน Dropdown
+async function openDeleteYearModal() {
+    // ดึงปีการศึกษาที่ไม่ซ้ำกัน (Distinct) จาก Database
+    const { data, error } = await db.from('student_council').select('academic_year');
+    
+    if (error) return Swal.fire('Error', 'ไม่สามารถดึงข้อมูลปีการศึกษาได้', 'error');
+
+    // กรองเอาเฉพาะปีที่ไม่ซ้ำ และเรียงจากมากไปน้อย
+    const years = [...new Set(data.map(item => item.academic_year))].sort((a, b) => b - a);
+    
+    const select = $('#deleteYearSelect');
+    select.empty();
+    
+    if (years.length === 0 || (years.length === 1 && years[0] === null)) {
+        select.append('<option value="">-- ไม่มีข้อมูล --</option>');
+    } else {
+        years.forEach(year => {
+            if(year) select.append(`<option value="${year}">ปีการศึกษา ${year}</option>`);
+        });
+    }
+    
+    new bootstrap.Modal('#deleteYearModal').show();
+}
+
+// ฟังก์ชันดำเนินการลบข้อมูลทั้งปี
+async function processDeleteYear() {
+    const year = $('#deleteYearSelect').val();
+    if (!year) return Swal.fire('แจ้งเตือน', 'ไม่มีปีการศึกษาให้ลบ', 'warning');
+
+    // ยืนยันขั้นที่ 1
+    const confirm1 = await Swal.fire({
+        title: `ยืนยันลบข้อมูลปี ${year}?`,
+        text: `นักเรียนทุกคนในปีการศึกษา ${year} จะถูกลบออกจากฐานข้อมูล`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'ใช่, ฉันแน่ใจ',
+        cancelButtonText: 'ยกเลิก'
+    });
+
+    if (!confirm1.isConfirmed) return;
+
+    // --- ส่วนที่แก้ไข: ปิด Modal เดิมก่อนเพื่อไม่ให้มันบล็อกการพิมพ์ ---
+    $('#deleteYearModal').modal('hide'); 
+
+    // ยืนยันขั้นที่ 2
+    const { value: confirmText } = await Swal.fire({
+        title: 'ยืนยันความปลอดภัย',
+        html: `กรุณาพิมพ์คำว่า <b class="text-danger">${year}</b> เพื่อยืนยันการลบข้อมูลทั้งหมด`,
+        input: 'text',
+        inputPlaceholder: `${year}`,
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'ลบทิ้งถาวร!',
+        cancelButtonText: 'ยกเลิก',
+        allowOutsideClick: false,
+        didOpen: () => {
+            // สั่งให้ Focus ไปที่ช่องพิมพ์ทันทีเมื่อเปิดขึ้นมา
+            const input = Swal.getInput();
+            if (input) input.focus();
+        }
+    });
+
+    if (confirmText === `${year}`) {
+        Swal.fire({ title: 'กำลังลบข้อมูล...', didOpen: () => Swal.showLoading() });
+        
+        const { error } = await db.from('student_council').delete().eq('academic_year', year);
+        
+        if (error) {
+            Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถลบข้อมูลได้: ' + error.message, 'error');
+        } else {
+            Swal.fire('สำเร็จ', `ลบข้อมูลปีการศึกษา ${year} เรียบร้อยแล้ว`, 'success')
+            .then(() => location.reload());
+        }
+    } else if (confirmText !== undefined) {
+        Swal.fire('ข้อมูลไม่ถูกต้อง', 'รหัสยืนยันไม่ตรงกัน ข้อมูลจึงไม่ถูกลบ', 'error');
+    }
+}
     </script>
 </body>
 </html>
