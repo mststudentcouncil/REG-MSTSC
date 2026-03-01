@@ -21,16 +21,11 @@
         body { font-family: 'Prompt', sans-serif; background-color: var(--bg-color); padding-bottom: 60px; }
 
         /* Z-Index Fixes */
-.swal2-container { z-index: 30000 !important; } 
-.modal-backdrop { z-index: 1040 !important; }
-.modal { z-index: 1050 !important; }
-
-/* เพิ่มบรรทัดนี้เพื่อความชัวร์ */
-.swal2-input {
-    z-index: 30001 !important;
-}
+        .swal2-container { z-index: 30000 !important; } 
+        .modal-backdrop { z-index: 1040 !important; }
+        .modal { z-index: 1050 !important; }
+        .swal2-input { z-index: 30001 !important; }
         
-
         #login-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: linear-gradient(135deg, #6A1B9A 0%, #311b92 100%); 
@@ -66,59 +61,25 @@
         .view-val { width: 65%; color: #333; font-weight: 500; }
         .modal-header-view { background: linear-gradient(135deg, #17a2b8, #117a8b); color: white; }
 
+        /* สไตล์สำหรับ Bulk Edit Table */
+        .bulk-edit-input { width: 100%; border: 1px solid transparent; padding: 2px 4px; background-color: transparent; border-radius: 3px; font-size: 0.9rem; }
+        .bulk-edit-input:focus { border: 1px solid var(--primary-color); background-color: #fff; outline: none; box-shadow: 0 0 0 0.1rem rgba(106,27,154,0.25); }
+        .bulk-edit-input:hover { background-color: rgba(0,0,0,0.02); border: 1px dashed #ccc; }
+        #bulkEditTable th { white-space: nowrap; font-size: 0.85rem; }
+
         @media (max-width: 767.98px) {
             .container-fluid { padding: 15px; }
             .admin-nav .logo { height: 35px; }
         }
-        /* สำหรับหน้าจอมือถือ (กว้างไม่เกิน 768px) */
-@media screen and (max-width: 768px) {
-    
-    /* 1. ปรับขนาดพื้นฐานของทั้งหน้า */
-    body, p, span, li, a {
-        font-size: 14px !important; /* ลดจากปกติที่มักจะเป็น 16px */
-        line-height: 1.5; /* เพิ่มระยะห่างบรรทัดให้อ่านง่ายขึ้นในจอเล็ก */
-    }
-
-    /* 2. ปรับหัวข้อ (Headings) ไม่ให้ใหญ่คับจอ */
-    h1 { font-size: 24px !important; }
-    h2 { font-size: 20px !important; }
-    h3 { font-size: 18px !important; }
-    h4, h5, h6 { font-size: 16px !important; }
-
-    /* 3. ปรับขนาด Input, ปุ่ม และ Form ในหน้า Admin/Login */
-    input, select, textarea, button, .btn {
-        font-size: 14px !important; 
-        padding: 8px 12px; /* ปรับ Padding ให้กดง่ายขึ้นแต่ไม่กินที่ */
-        height: auto; /* ป้องกันการกำหนดความสูงตายตัวที่อาจทำให้ตัวอักษรตก */
-    }
-
-    /* 4. ปรับตาราง (Table) ในหน้า Admin */
-    /* ตารางมักจะมีปัญหาที่สุดในมือถือ ให้ลดขนาดตัวอักษรลงอีกนิด */
-    table th, table td {
-        font-size: 12px !important;
-        padding: 5px !important;
-    }
-}
-@media screen and (max-width: 768px) {
-    /* ปรับกล่อง Login */
-    .login-container, .login-box, .card {
-        width: 90% !important; /* ให้กว้างเกือบเต็มจอ */
-        margin: 20px auto; /* จัดกึ่งกลาง */
-        padding: 15px !important; /* ลดพื้นที่ว่างด้านใน */
-    }
-
-    /* ปรับ Title ของหน้า Login */
-    .login-header h1, .login-title {
-        font-size: 22px !important;
-        margin-bottom: 15px;
-    }
-
-    /* ปรับช่องกรอก Username/Password ให้เต็มความกว้าง */
-    .login-form input {
-        width: 100%;
-        margin-bottom: 10px;
-    }
-}
+        @media screen and (max-width: 768px) {
+            body, p, span, li, a { font-size: 14px !important; line-height: 1.5; }
+            h1 { font-size: 24px !important; } h2 { font-size: 20px !important; } h3 { font-size: 18px !important; } h4, h5, h6 { font-size: 16px !important; }
+            input, select, textarea, button, .btn { font-size: 14px !important; padding: 8px 12px; height: auto; }
+            table th, table td { font-size: 12px !important; padding: 5px !important; }
+            .login-container, .login-box, .card { width: 90% !important; margin: 20px auto; padding: 15px !important; }
+            .login-header h1, .login-title { font-size: 22px !important; margin-bottom: 15px; }
+            .login-form input { width: 100%; margin-bottom: 10px; }
+        }
     </style>
 </head>
 <body>
@@ -128,9 +89,7 @@
             <img src="https://i.postimg.cc/yxjxZmRN/Logo-mstsc-(1)-(1).png" width="90" class="mb-3 rounded-circle border border-warning border-3">
             <h4 class="fw-bold text-dark mb-2">ADMIN REG - MSTSC</h4>
             <p class="text-muted small mb-4">สำหรับผู้ดูแลระบบคณะกรรมการสภานักเรียนเท่านั้น</p>
-            <p class="text-primary small mb-4" style="font-size: 0.8rem;">
-        <i class="fa-solid fa-shield-check"></i> ข้อมูลนักเรียนจะถูกจัดเก็บในระบบเป็นเวลา 5 ปี
-    </p>
+            
             <button onclick="loginWithGoogle()" class="btn btn-google w-100 py-2 fw-bold rounded-pill mb-3">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google">
                 เข้าสู่ระบบด้วย @mst.ac.th
@@ -160,8 +119,8 @@
                     <i class="fa-solid fa-file-csv"></i> <span class="d-none d-md-inline">นำเข้าข้อมูลนักเรียน</span>
                 </button>
                 <button class="btn btn-danger fw-bold shadow-sm" onclick="openDeleteYearModal()" title="ลบข้อมูลรายปี">
-    <i class="fa-solid fa-calendar-minus"></i> <span class="d-none d-md-inline">ลบข้อมูลรายปี</span>
-</button>
+                    <i class="fa-solid fa-calendar-minus"></i> <span class="d-none d-md-inline">ลบข้อมูลรายปี</span>
+                </button>
                 <button class="btn btn-info text-white fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#guideModal" title="วิธีใช้งาน">
                     <i class="fa-solid fa-circle-question"></i> <span class="d-none d-md-inline">วิธีใช้งาน</span>
                 </button>
@@ -172,16 +131,6 @@
         </nav>
 
         <div class="container-fluid">
-            
-           <div id="autoDeleteAlert" class="alert alert-warning border-warning shadow-sm d-none align-items-center mb-3" role="alert">
-    <i class="fa-solid fa-clock-rotate-left fs-3 me-3"></i>
-    <div class="flex-grow-1">
-        <strong class="text-dark">นโยบายการจัดเก็บข้อมูล:</strong> 
-        <span class="text-primary fw-bold">ข้อมูลของนักเรียนทุกคนจะถูกเก็บไว้เป็นเวลา 5 ปีการศึกษา</span> 
-        <br>ขณะนี้พบข้อมูลของ <span id="expiringYears" class="badge bg-danger">กำลังคำนวณ...</span> ที่ครบกำหนดแล้วและจะถูกลบอัตโนมัติ
-    </div>
-</div>
-    
             <div class="alert alert-danger border-danger shadow-sm d-flex align-items-center mb-4" role="alert">
                 <i class="fa-solid fa-shield-halved fs-2 me-3"></i>
                 <div>
@@ -194,9 +143,14 @@
             <div class="card border-0 shadow-sm p-4 rounded-4">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <h5 class="fw-bold text-primary m-0"><i class="fa-solid fa-database"></i> ฐานข้อมูลนักเรียน</h5>
-                    <button class="btn btn-primary btn-sm rounded-pill px-3" onclick="location.reload()">
-                        <i class="fa-solid fa-sync"></i> รีเฟรช
-                    </button>
+                    <div>
+                        <button class="btn btn-warning btn-sm rounded-pill px-3 fw-bold shadow-sm" onclick="openBulkEditModal()">
+                            <i class="fa-solid fa-table"></i> แก้ไขแบบตาราง
+                        </button>
+                        <button class="btn btn-primary btn-sm rounded-pill px-3 ms-1 shadow-sm" onclick="location.reload()">
+                            <i class="fa-solid fa-sync"></i> รีเฟรช
+                        </button>
+                    </div>
                 </div>
 
                 <div class="custom-search">
@@ -231,6 +185,45 @@
 
     <div class="global-footer">© 2026 Student Council, Muangsuratthani School.<br>Powered by Information Technology Team</div>
 
+    <div class="modal fade" id="bulkEditModal" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title fw-bold text-dark"><i class="fa-solid fa-table"></i> แก้ไขข้อมูลนักเรียนแบบตาราง (Bulk Edit)</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0 bg-light">
+                    <div class="table-responsive h-100">
+                        <table class="table table-bordered table-hover table-sm m-0" id="bulkEditTable">
+                            <thead class="table-dark position-sticky top-0 shadow-sm" style="z-index: 2;">
+                                <tr>
+                                    <th style="width: 70px;">ปีการศึกษา</th>
+                                    <th style="width: 90px;">รหัสนักเรียน</th>
+                                    <th style="width: 140px;">เลขบัตรประชาชน</th>
+                                    <th style="width: 80px;">คำนำหน้า</th>
+                                    <th style="width: 150px;">ชื่อ (ไทย)</th>
+                                    <th style="width: 150px;">นามสกุล (ไทย)</th>
+                                    <th style="width: 100px;">ชื่อเล่น</th>
+                                    <th style="width: 70px;">ห้อง</th>
+                                    <th style="width: 130px;">วันเกิด (YYYY-MM-DD)</th>
+                                    <th style="width: 150px;">อีเมลโรงเรียน</th>
+                                    <th style="width: 120px;">เบอร์โทร</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bulkEditBody" class="bg-white">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer bg-white border-top shadow">
+                    <span class="text-danger small fw-bold me-auto"><i class="fa-solid fa-circle-info"></i> แก้ไขข้อมูลในช่องตารางได้โดยตรง ข้อมูลจะถูกบันทึกเมื่อกดปุ่ม "บันทึกข้อมูลทั้งหมด"</span>
+                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">ยกเลิก</button>
+                    <button type="button" class="btn btn-success px-4 fw-bold" onclick="saveBulkEdit()"><i class="fa-solid fa-save"></i> บันทึกข้อมูลทั้งหมด</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="importModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -248,7 +241,6 @@
                             <i class="fa-solid fa-file-arrow-down"></i> โหลดแบบฟอร์ม (CSV)
                         </button>
                     </div>
-                    
                     <div class="alert alert-info small">
                         <b><i class="fa-solid fa-robot"></i> ระบบนำเข้าอัจฉริยะ (Smart Import):</b><br>
                         รองรับการก๊อปปี้จาก Excel, Sheets, CSV หรือพิมพ์เอง ขอแค่มี <b>"รหัสนักเรียน 5 หลัก"</b> และ <b>"ชื่อ-สกุล"</b>
@@ -268,7 +260,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title"><i class="fa-solid fa-user-pen"></i> แก้ไขข้อมูลนักเรียน</h5>
+                    <h5 class="modal-title"><i class="fa-solid fa-user-pen"></i> แก้ไขข้อมูลนักเรียน (รายบุคคล)</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body bg-light">
@@ -368,126 +360,187 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="deleteYearModal" tabindex="-1">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title fw-bold"><i class="fa-solid fa-triangle-exclamation"></i> ลบข้อมูลรายปี</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <label class="fw-bold mb-2">เลือกปีการศึกษาที่ต้องการลบ:</label>
-                <select id="deleteYearSelect" class="form-select fw-bold text-danger border-danger">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-triangle-exclamation"></i> ลบข้อมูลรายปี</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <label class="fw-bold mb-2">เลือกปีการศึกษาที่ต้องการลบ:</label>
+                    <select id="deleteYearSelect" class="form-select fw-bold text-danger border-danger">
                     </select>
-                <div class="alert alert-warning mt-3 mb-0 small">
-                    <i class="fa-solid fa-circle-info"></i> ข้อมูลนักเรียนทั้งหมดในปีที่เลือกจะถูกลบออกถาวร
+                    <div class="alert alert-warning mt-3 mb-0 small">
+                        <i class="fa-solid fa-circle-info"></i> ข้อมูลนักเรียนทั้งหมดในปีที่เลือกจะถูกลบออกถาวร
+                    </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-                <button type="button" class="btn btn-danger" onclick="processDeleteYear()">ยืนยันการลบ</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                    <button type="button" class="btn btn-danger" onclick="processDeleteYear()">ยืนยันการลบ</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
     
-    <div class="modal fade" id="guideModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-info text-white">
-                <h5 class="modal-title fw-bold"><i class="fa-solid fa-book"></i> วิธีการใช้งานระบบ Admin</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="accordion" id="accordionGuide">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide1">
-                                <i class="fa-solid fa-file-import me-2 text-warning"></i> 1. การนำเข้าข้อมูล (Import)
-                            </button>
-                        </h2>
-                        <div id="colGuide1" class="accordion-collapse collapse show" data-bs-parent="#accordionGuide">
-                            <div class="accordion-body">
-                                <ul>
-                                    <li>กดปุ่ม <b>"นำเข้า"</b> สีเหลืองที่เมนู</li>
-                                    <li>ระบุ <b>ปีการศึกษา</b> ที่ต้องการนำเข้า (เช่น 2567)</li>
-                                    <li>เตรียมข้อมูลใน Excel หรือ Text File โดยต้องมี 2 ส่วนคือ <code>รหัสนักเรียน 5 หลัก</code> และ <code>ชื่อ-สกุล</code></li>
-                                    <li>ก๊อปปี้และวางในกล่องข้อความ ระบบจะแยก "คำนำหน้า" และ "ชื่อ" ให้อัตโนมัติ (Smart Import)</li>
-                                </ul>
-                            </div>
+    <div class="modal fade" id="exportModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-file-export"></i> ส่งออกข้อมูลแบบกำหนดเอง</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="fw-bold text-primary mb-2"><i class="fa-solid fa-calendar"></i> 1. เลือกปีการศึกษา:</label>
+                            <div id="exportYearCheckboxes" class="border p-2 rounded bg-light" style="max-height: 250px; overflow-y: auto;">
+                                </div>
+                        </div>
+                        
+                        <div class="col-md-8 mb-3">
+                            <label class="fw-bold text-primary mb-2"><i class="fa-solid fa-table-columns"></i> 2. เลือกข้อมูลที่ต้องการ:</label>
+                            <div id="exportColumnCheckboxes" class="border p-2 rounded bg-light" style="max-height: 250px; overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr;">
+                                </div>
                         </div>
                     </div>
-
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide2">
-                                <i class="fa-solid fa-users-gear me-2 text-primary"></i> 2. การจัดการข้อมูล
-                            </button>
-                        </h2>
-                        <div id="colGuide2" class="accordion-collapse collapse" data-bs-parent="#accordionGuide">
-                            <div class="accordion-body">
-                                <ul>
-                                    <li><b>ค้นหา:</b> ใช้ช่องค้นหาด้านบน พิมพ์ชื่อ, นามสกุล หรือชื่อเล่น</li>
-                                    <li><b>แก้ไข:</b> กดปุ่ม <i class="fa-solid fa-pen-to-square text-warning"></i> สีเหลือง เพื่อแก้ไขข้อมูลรายคน</li>
-                                    <li><b>ลบ:</b> กดปุ่ม <i class="fa-solid fa-trash text-danger"></i> สีแดง เพื่อลบข้อมูล (ต้องยืนยันก่อนลบ)</li>
-                                    <li><b>ดูรายละเอียด:</b> กดปุ่ม <i class="fa-solid fa-magnifying-glass text-info"></i> สีฟ้า เพื่อดูข้อมูลเชิงลึกทั้งหมด</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide3">
-                                <i class="fa-solid fa-file-excel me-2 text-success"></i> 3. การส่งออกข้อมูล (Export)
-                            </button>
-                        </h2>
-                        <div id="colGuide3" class="accordion-collapse collapse" data-bs-parent="#accordionGuide">
-                            <div class="accordion-body">
-                                <ul>
-                                    <li>กดปุ่ม <b>"Export All (Excel)"</b> สีเขียวเหนือตาราง</li>
-                                    <li>ระบบจะดาวน์โหลดไฟล์ <code>.xlsx</code> ที่มีข้อมูลครบทุกช่อง (รวมถึงช่องที่ซ่อนอยู่ เช่น ชื่ออังกฤษ, ผู้ปกครอง)</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item">
-    <h2 class="accordion-header">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide4">
-            <i class="fa-solid fa-calendar-minus me-2 text-danger"></i> 4. การลบข้อมูลรายปี (Delete by Year)
-        </button>
-    </h2>
-    <div id="colGuide4" class="accordion-collapse collapse" data-bs-parent="#accordionGuide">
-        <div class="accordion-body">
-            <div class="p-2 mb-3 bg-light border-start border-4 border-info rounded">
-                <i class="fa-solid fa-info-circle text-info"></i> <b>นโยบายระบบ:</b> ข้อมูลของนักเรียนทุกคนจะถูกเก็บไว้ในระบบเป็นเวลา <b>5 ปีการศึกษา</b> และจะมีการทำความสะอาดข้อมูลเก่าโดยอัตโนมัติ
-            </div>
-            
-            <ul class="mb-0">
-                <li>กดปุ่ม <b>"ลบข้อมูลรายปี"</b> เพื่อลบปีที่ต้องการด้วยตนเอง</li>
-                <li>พิมพ์รหัสยืนยันเพื่อความปลอดภัยก่อนลบข้อมูลถาวร</li>
-            </ul>
-        </div>
-    </div>
-</div>
-
+                    
+                    <hr class="mt-0">
+                    <label class="fw-bold text-primary mb-2"><i class="fa-solid fa-file"></i> 3. เลือกรูปแบบไฟล์ที่ต้องการ:</label>
+                    <select id="exportFormat" class="form-select border-success text-dark fw-bold mb-2">
+                        <option value="excel">📊 Excel (.xlsx)</option>
+                        <option value="csv">📄 CSV (.csv)</option>
+                        <option value="print">🖨️ PDF / สั่งพิมพ์ (แนวนอน)</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                    <button type="button" class="btn btn-success px-4" onclick="processExport()"><i class="fa-solid fa-check"></i> ดำเนินการ</button>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+        </div>
+    </div>
+
+    <div class="modal fade" id="guideModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-book"></i> คู่มือการใช้งานระบบ Admin</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="accordion" id="accordionGuide">
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide1">
+                                    <i class="fa-solid fa-file-import me-2 text-warning"></i> 1. การนำเข้าข้อมูลนักเรียน (Import)
+                                </button>
+                            </h2>
+                            <div id="colGuide1" class="accordion-collapse collapse show" data-bs-parent="#accordionGuide">
+                                <div class="accordion-body">
+                                    <ol>
+                                        <li>กดปุ่ม <b>"นำเข้าข้อมูลนักเรียน"</b> (ปุ่มสีเหลืองที่เมนูด้านบน)</li>
+                                        <li>พิมพ์ <b>ปีการศึกษา</b> ที่ต้องการนำเข้า (ค่าเริ่มต้นจะเป็นปีปัจจุบัน)</li>
+                                        <li>คัดลอกข้อมูลนักเรียนจาก Excel หรือ Text file <b>(ต้องมีรหัส 5 หลัก และ ชื่อ-สกุล)</b> มาวางในกล่องข้อความ</li>
+                                        <li>กด <b>"ตรวจสอบและบันทึก"</b> ระบบจะตัดคำนำหน้าและแยกชื่อ-สกุลให้อัตโนมัติ หากมีคนซ้ำในระบบแล้ว ระบบจะข้ามให้ทันที</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide2">
+                                    <i class="fa-solid fa-users-gear me-2 text-primary"></i> 2. การจัดการข้อมูลรายบุคคล (ดู / แก้ไข / ลบ)
+                                </button>
+                            </h2>
+                            <div id="colGuide2" class="accordion-collapse collapse" data-bs-parent="#accordionGuide">
+                                <div class="accordion-body">
+                                    <p class="mb-2">สามารถค้นหานักเรียนได้อย่างรวดเร็วผ่าน <b>ช่องค้นหา</b> (พิมพ์ชื่อ นามสกุล หรือรหัสได้เลย)</p>
+                                    <ul>
+                                        <li><b>ดูข้อมูล:</b> กดปุ่ม <button class="btn btn-info btn-sm text-white" disabled><i class="fa-solid fa-magnifying-glass"></i></button> เพื่อดูประวัตินักเรียนทุกช่อง</li>
+                                        <li><b>แก้ไข:</b> กดปุ่ม <button class="btn btn-warning btn-sm" disabled><i class="fa-solid fa-pen-to-square"></i></button> ระบบจะเปิดหน้าต่างให้แก้ข้อมูลเฉพาะของคนนั้นๆ</li>
+                                        <li><b>ลบข้อมูล:</b> กดปุ่ม <button class="btn btn-danger btn-sm" disabled><i class="fa-solid fa-trash"></i></button> หากกดยืนยัน ข้อมูลนักเรียนคนนี้จะหายไปจากระบบทันที</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide3">
+                                    <i class="fa-solid fa-table me-2 text-dark"></i> 3. การแก้ไขข้อมูลแบบตาราง (Bulk Edit)
+                                </button>
+                            </h2>
+                            <div id="colGuide3" class="accordion-collapse collapse" data-bs-parent="#accordionGuide">
+                                <div class="accordion-body">
+                                    <p class="text-danger small fw-bold">** เหมาะสำหรับตอนที่ต้องการกรอกข้อมูลเพิ่มเติม (เช่น ห้อง, วันเกิด) ให้เด็กหลายๆ คนพร้อมกัน</p>
+                                    <ol>
+                                        <li>กดปุ่ม <b>"แก้ไขแบบตาราง"</b> (ปุ่มสีเหลือง อยู่เหนือตารางค้นหา)</li>
+                                        <li>ระบบจะแสดงตารางเต็มจอคล้ายโปรแกรม Excel คุณสามารถคลิกที่ช่องใดก็ได้เพื่อพิมพ์ข้อความลงไปทันที</li>
+                                        <li>เมื่อแก้ไขข้อมูลทุกอย่างเสร็จแล้ว <b>ต้องกดปุ่ม "บันทึกข้อมูลทั้งหมด" (สีเขียวด้านล่าง)</b> เพื่อยืนยันการบันทึกลงฐานข้อมูล</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide4">
+                                    <i class="fa-solid fa-file-export me-2 text-success"></i> 4. การส่งออกข้อมูล (Export / Print)
+                                </button>
+                            </h2>
+                            <div id="colGuide4" class="accordion-collapse collapse" data-bs-parent="#accordionGuide">
+                                <div class="accordion-body">
+                                    <ol>
+                                        <li>กดปุ่ม <b>"ส่งออกข้อมูล"</b> (ปุ่มสีเขียว อยู่เหนือตารางค้นหา)</li>
+                                        <li>เลือก <b>ปีการศึกษา</b> ที่ต้องการดึงข้อมูล</li>
+                                        <li>ติ๊กเลือกเฉพาะ <b>คอลัมน์ข้อมูล</b> ที่ต้องการใช้งานจริง (เพื่อไม่ให้ตารางรกเกินไป)</li>
+                                        <li>เลือกรูปแบบไฟล์ <b>Excel, CSV หรือ PDF/สั่งพิมพ์</b> จากนั้นกดดำเนินการ</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide5">
+                                    <i class="fa-solid fa-calendar-minus me-2 text-danger"></i> 5. การลบข้อมูลรายปี
+                                </button>
+                            </h2>
+                            <div id="colGuide5" class="accordion-collapse collapse" data-bs-parent="#accordionGuide">
+                                <div class="accordion-body">
+                                    <p class="text-danger small fw-bold">** คำเตือน: การกระทำนี้ไม่สามารถย้อนกลับได้ ข้อมูลเด็กทั้งรุ่นจะถูกลบทิ้งถาวร</p>
+                                    <ol>
+                                        <li>กดปุ่ม <b>"ลบข้อมูลรายปี"</b> (ปุ่มสีแดงที่เมนูด้านบน)</li>
+                                        <li>เลือกระบุปีการศึกษาที่ต้องการเคลียร์ข้อมูล</li>
+                                        <li>เพื่อป้องกันการกดผิด ระบบจะบังคับให้คุณ <b>พิมพ์ตัวเลขปีการศึกษา (เช่น 2566)</b> ลงไปในช่องยืนยันก่อน ถึงจะอนุญาตให้ลบได้</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิดคู่มือ</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    
     <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
@@ -496,74 +549,62 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxsYmF6cXdwYXJqYXB0c2pieHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMDk0MDQsImV4cCI6MjA4NDU4NTQwNH0.NcHwvFMnzU6GgHBaud4nNJgwFBK1WQtxAdGbcM-BaYU';
         const db = createClient(supabaseUrl, supabaseKey);
         
-        // รายชื่ออีเมลที่อนุญาตให้เข้าใช้งาน
         const ALLOWED_EMAILS = [
-    'studentcouncil@mst.ac.th',
-    '6829903@mst.ac.th',
-    'tassanee@mst.ac.th',
-    'admin.it@mst.ac.th' 
-    // เพิ่มได้เรื่อยๆ ครับ
+            'studentcouncil@mst.ac.th',
+            '6829903@mst.ac.th',
+            'tassanee@mst.ac.th',
+            'admin.it@mst.ac.th' 
         ];
-    
 
-        // ================= AUTHENTICATION LOGIC (NEW) =================
+        function formatThaiDate(dateStr) {
+            if (!dateStr || dateStr === '-') return '-';
+            const parts = dateStr.split('-');
+            if (parts.length !== 3) return dateStr;
+            const months = ["", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            const day = parseInt(parts[2], 10);
+            const month = months[parseInt(parts[1], 10)];
+            const year = parseInt(parts[0], 10) + 543;
+            return `${day} ${month} ${year}`;
+        }
+
+        window.selectedExportYears = [];
+        window.selectedExportColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
+        
+        const exportableColumns = [
+            { idx: 0, name: 'ปีการศึกษา' }, { idx: 1, name: 'รหัสนักเรียน' }, { idx: 2, name: 'เลขบัตรประชาชน' },
+            { idx: 3, name: 'ชื่อ-สกุล (ไทย)' }, { idx: 4, name: 'ชื่อเล่น' }, { idx: 5, name: 'ห้อง' },
+            { idx: 6, name: 'อีเมลโรงเรียน' }, { idx: 7, name: 'เบอร์โทรศัพท์' }, { idx: 8, name: 'สถานะ' },
+            { idx: 10, name: 'ชื่อ-สกุล (อังกฤษ)' }, { idx: 11, name: 'วันเกิด' }, { idx: 12, name: 'กรุ๊ปเลือด' },
+            { idx: 13, name: 'ไซส์เสื้อ' }, { idx: 14, name: 'อีเมลส่วนตัว' }, { idx: 15, name: 'Line ID' },
+            { idx: 16, name: 'Social Media' }, { idx: 17, name: 'ที่อยู่' }, { idx: 18, name: 'ชื่อผู้ปกครอง' },
+            { idx: 19, name: 'เบอร์ผู้ปกครอง' }
+        ];
+
         $(document).ready(async () => {
-            // เช็คว่ามี Session ค้างอยู่ไหม
             const { data: { session } } = await db.auth.getSession();
-            
-            if (session) {
-                checkUserAndRedirect(session.user);
-            } else {
-                $('#login-overlay').show(); // แสดงหน้า Login
-            }
+            if (session) { checkUserAndRedirect(session.user); } 
+            else { $('#login-overlay').show(); }
 
-            // ฟัง Event เมื่อมีการล็อกอินกลับมาจาก Google
             db.auth.onAuthStateChange((event, session) => {
-                if (event === 'SIGNED_IN' && session) {
-                    checkUserAndRedirect(session.user);
-                } else if (event === 'SIGNED_OUT') {
-                    $('#admin-content').hide();
-                    $('#login-overlay').fadeIn();
-                }
+                if (event === 'SIGNED_IN' && session) { checkUserAndRedirect(session.user); } 
+                else if (event === 'SIGNED_OUT') { $('#admin-content').hide(); $('#login-overlay').fadeIn(); }
             });
         });
 
-        // ฟังก์ชันล็อกอินด้วย Google
-        // ฟังก์ชันล็อกอินด้วย Google (ปรับปรุงใหม่)
         async function loginWithGoogle() {
-            const { data, error } = await db.auth.signInWithOAuth({
-                provider: 'google',
-                options: { 
-                    queryParams: { access_type: 'offline', prompt: 'consent' },
-                    // บรรทัดนี้สำคัญ! สั่งให้เด้งกลับมาที่หน้าปัจจุบัน (admin.html) ไม่ใช่หน้า index
-                    redirectTo: window.location.href 
-                }
-            });
+            const { data, error } = await db.auth.signInWithOAuth({ provider: 'google', options: { queryParams: { access_type: 'offline', prompt: 'consent' }, redirectTo: window.location.href }});
             if (error) Swal.fire('Error', error.message, 'error');
         }
 
-        // ฟังก์ชันตรวจสอบอีเมล (รองรับหลายคน)
         function checkUserAndRedirect(user) {
             const email = user.email;
-            
-            // เช็คว่าอีเมลของคนที่ล็อกอิน มีอยู่ในรายการ ALLOWED_EMAILS หรือไม่
             if (ALLOWED_EMAILS.includes(email)) {
-                // อีเมลถูกต้อง -> เข้าสู่ระบบ
                 $('#userEmailDisplay').text(email);
                 $('#login-overlay').fadeOut();
                 $('#admin-content').fadeIn();
                 initTable();
             } else {
-                // อีเมลผิด -> แจ้งเตือนและดีดออก
-                Swal.fire({
-                    icon: 'error',
-                    title: 'เข้าสู่ระบบไม่ได้',
-                    html: `อีเมล <b>${email}</b> ไม่มีสิทธิ์เข้าถึงระบบ Admin`,
-                    confirmButtonText: 'ตกลง',
-                    allowOutsideClick: false
-                }).then(() => {
-                    db.auth.signOut();
-                });
+                Swal.fire({ icon: 'error', title: 'เข้าสู่ระบบไม่ได้', html: `อีเมล <b>${email}</b> ไม่มีสิทธิ์เข้าถึงระบบ Admin`, confirmButtonText: 'ตกลง', allowOutsideClick: false }).then(() => { db.auth.signOut(); });
             }
         }
 
@@ -571,20 +612,27 @@
             const { error } = await db.auth.signOut();
             if(!error) location.reload();
         }
-        // ================= END AUTH =================
 
-        // TABLE
         let table;
         async function initTable() {
             if ($.fn.DataTable.isDataTable('#studentTable')) return;
-            if ($.fn.DataTable.isDataTable('#studentTable')) {
-        return; 
-    }
-            const { data, error } = await db.from('student_council').select('*').order('std_id', { ascending: true });
+            const { data, error } = await db.from('student_council').select('*').order('academic_year', { ascending: false }).order('std_id', { ascending: true });
             if(error) return console.error(error);
+
+            const commonExportOptions = {
+                columns: function ( idx, data, node ) { return window.selectedExportColumns.includes(idx); },
+                rows: function ( idx, data, node ) { if (!window.selectedExportYears || window.selectedExportYears.length === 0) return true; return window.selectedExportYears.includes(data.academic_year.toString()); },
+                format: {
+                    header: function (data, columnIdx) {
+                        const headers = { 0: "ปีการศึกษา", 1: "รหัสนักเรียน", 2: "เลขบัตรประชาชน", 3: "ชื่อ-สกุล (ไทย)", 4: "ชื่อเล่น", 5: "ห้อง", 6: "อีเมลโรงเรียน", 7: "เบอร์โทรศัพท์", 8: "สถานะ", 10: "ชื่อ-สกุล (อังกฤษ)", 11: "วันเกิด", 12: "กรุ๊ปเลือด", 13: "ไซส์เสื้อ", 14: "อีเมลส่วนตัว", 15: "Line ID", 16: "Social Media", 17: "ที่อยู่", 18: "ชื่อผู้ปกครอง", 19: "เบอร์ผู้ปกครอง" };
+                        return headers[columnIdx] || data;
+                    }
+                }
+            };
 
             table = $('#studentTable').DataTable({
                 data: data,
+                order: [[0, 'desc'], [1, 'asc']], 
                 columns: [
                     { data: 'academic_year', render: d => d ? `<span class="badge bg-secondary">${d}</span>` : '-' },
                     { data: 'std_id' },
@@ -596,7 +644,7 @@
                     { data: 'phone', defaultContent: '-' },
                     { data: 'id_card', render: d => (d && d.length>5) ? '<span class="status-badge bg-active">Active</span>':'<span class="status-badge bg-inactive">New</span>' },
                     {
-                        data: null, className: "text-center",
+                        data: null, className: "text-center", orderable: false,
                         render: (d, t, r) => {
                             const row = encodeURIComponent(JSON.stringify(r));
                             return `
@@ -606,92 +654,151 @@
                             `;
                         }
                     },
-                    { data: null, visible: false, render: d => `${d.fname_en} ${d.lname_en}` },
-                    { data: 'birthdate', visible: false }, 
+                    { data: null, visible: false, render: d => `${d.fname_en || ''} ${d.lname_en || ''}` },
+                    { data: 'birthdate', visible: false, render: d => formatThaiDate(d) }, 
                     { data: 'blood_type', visible: false },
                     { data: 'shirt_size', visible: false }, 
                     { data: 'personal_email', visible: false },
                     { data: 'line_id', visible: false }, 
                     { data: 'social', visible: false },
-                    { data: 'addr_no', visible: false }, 
+                    { data: null, visible: false, render: (d, type, row) => { let fullAddress = `${row.addr_no || ''} ${row.district || ''} ${row.amphoe || ''} ${row.province || ''} ${row.zipcode || ''}`; return fullAddress.trim() === '' ? '-' : fullAddress.trim(); } }, 
                     { data: 'parent_name', visible: false },
                     { data: 'parent_phone', visible: false }
                 ],
                 dom: 'lBrtip', 
                 lengthMenu: [[10, 20, 50, 100, -1], [10, 20, 50, 100, "ทั้งหมด"]],
-                language: {
-                    lengthMenu: "แสดง _MENU_ รายการ",
-                    info: "แสดง _START_ ถึง _END_ จากทั้งหมด _TOTAL_ รายการ",
-                    paginate: { first: "หน้าแรก", last: "หน้าสุดท้าย", next: "ถัดไป", previous: "ก่อนหน้า" },
-                    emptyTable: "ไม่มีข้อมูลในตาราง"
-                },
-                buttons: [{ 
-                    extend: 'excelHtml5', 
-                    text: '<i class="fa-solid fa-file-excel"></i> Export All (Excel)', 
-                    className: 'btn btn-success mb-3 ms-2', 
-                    exportOptions: { 
-                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
-                        format: {
-                            header: function (data, columnIdx) {
-                                const headers = [
-                                    "ปีการศึกษา", "รหัสนักเรียน", "เลขบัตรประชาชน", "ชื่อ-สกุล (ไทย)", "ชื่อเล่น", "ห้อง",
-                                    "อีเมลโรงเรียน", "เบอร์โทรศัพท์", "สถานะ", "จัดการ", "ชื่อ-สกุล (อังกฤษ)", "วันเกิด",
-                                    "กรุ๊ปเลือด", "ไซส์เสื้อ", "อีเมลส่วนตัว", "Line ID", "Social Media", "ที่อยู่",
-                                    "ชื่อผู้ปกครอง", "เบอร์ผู้ปกครอง"
-                                ];
-                                return headers[columnIdx] || data;
-                            }
+                language: { lengthMenu: "แสดง _MENU_ รายการ", info: "แสดง _START_ ถึง _END_ จากทั้งหมด _TOTAL_ รายการ", paginate: { first: "หน้าแรก", last: "หน้าสุดท้าย", next: "ถัดไป", previous: "ก่อนหน้า" }, emptyTable: "ไม่มีข้อมูลในตาราง" },
+                buttons: [
+                    { text: '<i class="fa-solid fa-file-export"></i> ส่งออกข้อมูล', className: 'btn btn-success mb-3 ms-2 shadow-sm rounded-pill px-4', action: function ( e, dt, node, config ) { openExportModal(); } },
+                    { extend: 'excelHtml5', className: 'd-none hidden-excel-btn', exportOptions: commonExportOptions },
+                    { extend: 'csvHtml5', className: 'd-none hidden-csv-btn', exportOptions: commonExportOptions },
+                    { 
+                        extend: 'print', className: 'd-none hidden-print-btn', title: 'รายงานข้อมูลสภานักเรียนโรงเรียนเมืองสุราษฎร์ธานี', exportOptions: commonExportOptions,
+                        customize: function (win) {
+                            $(win.document.head).append(`
+                                <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+                                <style>
+                                    @page { size: A4 landscape; margin: 10mm; }
+                                    body { font-family: 'Sarabun', sans-serif !important; color: #000; }
+                                    h1 { text-align: center; font-size: 18px !important; margin-bottom: 15px; font-weight: bold; }
+                                    table { width: 100% !important; border-collapse: collapse !important; }
+                                    table th, table td { border: 1px solid #333 !important; font-size: 10px !important; padding: 4px !important; white-space: normal !important; word-break: break-word !important; vertical-align: top; }
+                                    table th { background-color: #f2f2f2 !important; text-align: center; }
+                                </style>
+                            `);
                         }
                     }
-                }],
+                ],
                 pageLength: 20
             });
-            async function checkExpiringData() {
-    const currentYearTH = new Date().getFullYear() + 543;
-    const expiryThreshold = currentYearTH - 5; // เกณฑ์ 5 ปี
-
-    // ดึงรายการปีการศึกษาที่มีอยู่ในระบบมาตรวจสอบ
-    const { data, error } = await db
-        .from('student_council')
-        .select('academic_year')
-        .lte('academic_year', expiryThreshold); // กรองเอาเฉพาะปีที่เก่ากว่าหรือเท่ากับเกณฑ์
-
-    if (data && data.length > 0) {
-        // หาปีที่เก่าที่สุดและใหม่ที่สุดที่จะโดนลบ
-        const years = [...new Set(data.map(item => item.academic_year))].sort();
-        
-        if (years.length > 0) {
-            $('#expiringYears').text('ปีการศึกษา ' + years.join(', '));
-            $('#autoDeleteAlert').removeClass('d-none').addClass('d-flex');
-        }
-    }
-}
-
-// เรียกใช้งานฟังก์ชัน
-$(document).ready(function() {
-    // รอให้ตารางโหลดเสร็จก่อนค่อยเช็ค (หรือเรียกต่อจาก initTable)
-    setTimeout(checkExpiringData, 2000);
-});
             $('#searchInput').on('keyup', function() { table.search(this.value).draw(); });
         }
 
-        // Functions for Import/Edit/Delete (Same as before)
+        // ================= BULK EDIT LOGIC =================
+        async function openBulkEditModal() {
+            Swal.fire({ title: 'กำลังโหลดข้อมูล...', didOpen: () => Swal.showLoading() });
+            
+            const { data, error } = await db.from('student_council')
+                .select('*')
+                .order('academic_year', { ascending: false })
+                .order('std_id', { ascending: true });
+
+            if (error) { Swal.fire('Error', error.message, 'error'); return; }
+
+            let html = '';
+            data.forEach(r => {
+                html += `
+                <tr data-id="${r.id}">
+                    <td class="d-none"><input type="hidden" class="be-id" value="${r.id}"></td>
+                    <td><input type="number" class="bulk-edit-input be-year text-center" value="${r.academic_year || ''}"></td>
+                    <td><input type="text" class="bulk-edit-input be-stdid text-center" value="${r.std_id || ''}"></td>
+                    <td><input type="text" class="bulk-edit-input be-idcard text-center" value="${r.id_card || ''}" maxlength="13"></td>
+                    <td><input type="text" class="bulk-edit-input be-prefix" value="${r.prefix || ''}"></td>
+                    <td><input type="text" class="bulk-edit-input be-fnameth" value="${r.fname_th || ''}"></td>
+                    <td><input type="text" class="bulk-edit-input be-lnameth" value="${r.lname_th || ''}"></td>
+                    <td><input type="text" class="bulk-edit-input be-nickname" value="${r.nickname || ''}"></td>
+                    <td><input type="text" class="bulk-edit-input be-room text-center" value="${r.room || ''}"></td>
+                    <td><input type="date" class="bulk-edit-input be-birth" value="${r.birthdate || ''}"></td>
+                    <td><input type="text" class="bulk-edit-input be-email" value="${r.school_email || ''}"></td>
+                    <td><input type="text" class="bulk-edit-input be-phone text-center" value="${r.phone || ''}"></td>
+                </tr>`;
+            });
+
+            $('#bulkEditBody').html(html);
+            Swal.close();
+            new bootstrap.Modal('#bulkEditModal').show();
+        }
+
+        async function saveBulkEdit() {
+            const updates = [];
+            $('#bulkEditBody tr').each(function() {
+                const tr = $(this);
+                updates.push({
+                    id: tr.find('.be-id').val(),
+                    academic_year: tr.find('.be-year').val(),
+                    std_id: tr.find('.be-stdid').val(),
+                    id_card: tr.find('.be-idcard').val() || null,
+                    prefix: tr.find('.be-prefix').val() || null,
+                    fname_th: tr.find('.be-fnameth').val(),
+                    lname_th: tr.find('.be-lnameth').val(),
+                    nickname: tr.find('.be-nickname').val() || null,
+                    room: tr.find('.be-room').val() || null,
+                    birthdate: tr.find('.be-birth').val() || null,
+                    school_email: tr.find('.be-email').val() || null,
+                    phone: tr.find('.be-phone').val() || null
+                });
+            });
+
+            if(updates.length === 0) return;
+            Swal.fire({ title: 'กำลังบันทึก...', html: 'กรุณารอสักครู่ (อาจใช้เวลา 5-10 วินาที)', didOpen: () => Swal.showLoading() });
+            
+            const { error } = await db.from('student_council').upsert(updates);
+            if (error) { Swal.fire('Error', error.message, 'error'); } 
+            else { Swal.fire('สำเร็จ', 'บันทึกข้อมูลแบบตารางเรียบร้อยแล้ว', 'success').then(() => { location.reload(); }); }
+        }
+
+        // ================= EXPORT MODAL LOGIC =================
+        function openExportModal() {
+            const rawYears = table.column(0).data().toArray();
+            const uniqueYears = [...new Set(rawYears.map(d => d.toString()))].filter(y => y !== '-' && y !== '').sort().reverse();
+            let yearHtml = `<div class="form-check mb-2" style="grid-column: 1 / -1;"><input class="form-check-input" type="checkbox" id="selectAllYears" onchange="toggleAllYears(this)" checked><label class="form-check-label fw-bold" for="selectAllYears">เลือกทุกปี</label></div><div class="w-100 border-bottom mb-2" style="grid-column: 1 / -1;"></div>`;
+            if(uniqueYears.length === 0) { yearHtml += `<div class="text-muted small">ไม่มีข้อมูลในระบบ</div>`; } 
+            else { uniqueYears.forEach(year => { yearHtml += `<div class="form-check my-1"><input class="form-check-input year-export-cb" type="checkbox" value="${year}" id="cb_y_${year}" checked><label class="form-check-label small" for="cb_y_${year}">ปี ${year}</label></div>`; }); }
+            $('#exportYearCheckboxes').html(yearHtml);
+
+            let colHtml = `<div class="form-check mb-2" style="grid-column: 1 / -1;"><input class="form-check-input" type="checkbox" id="selectAllCols" onchange="toggleAllCols(this)" checked><label class="form-check-label fw-bold" for="selectAllCols">เลือกข้อมูลทั้งหมด</label></div><div class="w-100 border-bottom mb-2" style="grid-column: 1 / -1;"></div>`;
+            exportableColumns.forEach(col => { colHtml += `<div class="form-check my-1"><input class="form-check-input col-export-cb" type="checkbox" value="${col.idx}" id="cb_c_${col.idx}" checked><label class="form-check-label small" for="cb_c_${col.idx}">${col.name}</label></div>`; });
+            $('#exportColumnCheckboxes').html(colHtml);
+            $('#exportFormat').val('excel'); 
+            new bootstrap.Modal('#exportModal').show();
+        }
+
+        function toggleAllYears(source) { $('.year-export-cb').prop('checked', source.checked); }
+        function toggleAllCols(source) { $('.col-export-cb').prop('checked', source.checked); }
+
+        function processExport() {
+            window.selectedExportYears = []; $('.year-export-cb:checked').each(function() { window.selectedExportYears.push($(this).val()); });
+            window.selectedExportColumns = []; $('.col-export-cb:checked').each(function() { window.selectedExportColumns.push(parseInt($(this).val())); });
+            if(window.selectedExportYears.length === 0) return Swal.fire('แจ้งเตือน', 'กรุณาเลือกปีการศึกษาอย่างน้อย 1 ปี', 'warning');
+            if(window.selectedExportColumns.length === 0) return Swal.fire('แจ้งเตือน', 'กรุณาเลือกข้อมูลอย่างน้อย 1 อย่าง', 'warning');
+
+            const format = $('#exportFormat').val();
+            if (format === 'excel') table.button('.hidden-excel-btn').trigger();
+            else if (format === 'csv') table.button('.hidden-csv-btn').trigger();
+            else if (format === 'print') table.button('.hidden-print-btn').trigger();
+            $('#exportModal').modal('hide');
+        }
+
+        // ================= OTHER FUNCTIONS =================
         function downloadTemplate() {
             const csvContent = "\uFEFFstd_id,full_name\n12345,นายสมชาย ใจดี\n12346,นางสาวสมหญิง รักเรียน";
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", "template_student_import.csv");
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const link = document.createElement("a"); link.setAttribute("href", URL.createObjectURL(blob)); link.setAttribute("download", "template_student_import.csv");
+            link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
 
         function openImportModal() {
-            const today = new Date();
-            let defaultYear = today.getFullYear() + 543;
+            const today = new Date(); let defaultYear = today.getFullYear() + 543;
             if (today.getMonth() < 4 || (today.getMonth() === 4 && today.getDate() < 15)) defaultYear -= 1;
             $('#importYear').val(defaultYear);
             new bootstrap.Modal('#importModal').show();
@@ -703,66 +810,36 @@ $(document).ready(function() {
             fullName = fullName.trim();
             const prefixes = ["นางสาว", "นาง", "นาย", "ด.ช.", "ด.ญ.", "ว่าที่ร้อยตรี", "น.ส.", "น.ส", "เด็กชาย", "เด็กหญิง"];
             let prefix = "", fname = "", lname = "";
-            for (let p of prefixes) {
-                if (fullName.startsWith(p)) {
-                    prefix = (p === "น.ส." || p === "น.ส") ? "นางสาว" : p;
-                    fullName = fullName.substring(p.length).trim();
-                    break;
-                }
-            }
-            const parts = fullName.split(/\s+/);
-            if (parts.length > 0) fname = parts[0];
-            if (parts.length > 1) lname = parts.slice(1).join(" ");
+            for (let p of prefixes) { if (fullName.startsWith(p)) { prefix = (p === "น.ส." || p === "น.ส") ? "นางสาว" : p; fullName = fullName.substring(p.length).trim(); break; } }
+            const parts = fullName.split(/\s+/); if (parts.length > 0) fname = parts[0]; if (parts.length > 1) lname = parts.slice(1).join(" ");
             return { prefix, fname, lname };
         }
 
         async function processImport() {
-            const raw = $('#importData').val().trim();
-            const selectedYear = $('#importYear').val();
-            if(!selectedYear) return Swal.fire('ระบุปี', 'กรุณาระบุปีการศึกษา', 'warning');
-            if(!raw) return Swal.fire('ข้อมูลว่าง', 'กรุณาวางข้อมูลนักเรียน', 'warning');
-
-            const lines = raw.split('\n');
-            const candidates = []; const candidateIds = [];
-            let invalidLines = 0;
-
+            const raw = $('#importData').val().trim(); const selectedYear = $('#importYear').val();
+            if(!selectedYear) return Swal.fire('ระบุปี', 'กรุณาระบุปีการศึกษา', 'warning'); if(!raw) return Swal.fire('ข้อมูลว่าง', 'กรุณาวางข้อมูลนักเรียน', 'warning');
+            const lines = raw.split('\n'); const candidates = []; const candidateIds = []; let invalidLines = 0;
             lines.forEach(line => {
-                line = line.trim();
-                if (!line) return;
-                const idMatch = line.match(/(\d{5})/);
+                line = line.trim(); if (!line) return; const idMatch = line.match(/(\d{5})/);
                 if (idMatch) {
-                    const stdId = idMatch[0];
-                    let namePart = line.replace(stdId, '').trim();
-                    namePart = namePart.replace(/^[,;\t-]+|[,;\t-]+$/g, '').trim();
+                    const stdId = idMatch[0]; let namePart = line.replace(stdId, '').trim(); namePart = namePart.replace(/^[,;\t-]+|[,;\t-]+$/g, '').trim();
                     if (namePart) {
                         const nameObj = splitThaiName(namePart);
-                        if (nameObj.fname) {
-                            candidates.push({ std_id: stdId, prefix: nameObj.prefix, fname_th: nameObj.fname, lname_th: nameObj.lname, academic_year: selectedYear });
-                            candidateIds.push(stdId);
-                        } else invalidLines++;
+                        if (nameObj.fname) { candidates.push({ std_id: stdId, prefix: nameObj.prefix, fname_th: nameObj.fname, lname_th: nameObj.lname, academic_year: selectedYear }); candidateIds.push(stdId); } 
+                        else invalidLines++;
                     } else invalidLines++;
                 } else invalidLines++;
             });
-
             if(candidates.length === 0) return Swal.fire('ไม่พบข้อมูล', 'โปรดตรวจสอบรูปแบบข้อมูล (ต้องมีรหัส 5 หลัก)', 'error');
             Swal.fire({ title: 'กำลังตรวจสอบ...', didOpen: () => Swal.showLoading() });
 
             const { data: existingRecords } = await db.from('student_council').select('std_id').in('std_id', candidateIds);
             const existingSet = new Set(existingRecords ? existingRecords.map(r => r.std_id) : []);
-            
-            const finalInsert = candidates.filter(c => !existingSet.has(c.std_id));
-            const skippedCount = candidates.length - finalInsert.length;
-
+            const finalInsert = candidates.filter(c => !existingSet.has(c.std_id)); const skippedCount = candidates.length - finalInsert.length;
             if (finalInsert.length === 0) return Swal.fire('ข้อมูลซ้ำทั้งหมด', `มี ${skippedCount} รายการซ้ำในระบบแล้ว`, 'info');
 
-            const confirm = await Swal.fire({ 
-                title: `ยืนยันนำเข้า`, 
-                html: `ปีการศึกษา: <b>${selectedYear}</b><br>ข้อมูลใหม่: <b class="text-success">${finalInsert.length}</b><br>ซ้ำ/ข้าม: <b class="text-danger">${skippedCount}</b>` + (invalidLines > 0 ? `<br>อ่านไม่ออก: ${invalidLines}` : ''),
-                icon: 'question', showCancelButton: true, confirmButtonText: 'ยืนยันนำเข้า' 
-            });
-            
+            const confirm = await Swal.fire({ title: `ยืนยันนำเข้า`, html: `ปีการศึกษา: <b>${selectedYear}</b><br>ข้อมูลใหม่: <b class="text-success">${finalInsert.length}</b><br>ซ้ำ/ข้าม: <b class="text-danger">${skippedCount}</b>` + (invalidLines > 0 ? `<br>อ่านไม่ออก: ${invalidLines}` : ''), icon: 'question', showCancelButton: true, confirmButtonText: 'ยืนยันนำเข้า' });
             if (!confirm.isConfirmed) return;
-
             const { error: insertError } = await db.from('student_council').insert(finalInsert);
             if(insertError) Swal.fire('บันทึกไม่สำเร็จ', insertError.message, 'error');
             else { Swal.fire('สำเร็จ', `บันทึก ${finalInsert.length} รายการ`, 'success'); $('#importModal').modal('hide'); location.reload(); }
@@ -773,7 +850,7 @@ $(document).ready(function() {
             $('#v_std_id').text(r.std_id || '-'); $('#v_academic_year').text(r.academic_year || '-');
             $('#v_name_th').text(`${r.prefix || ''} ${r.fname_th} ${r.lname_th}`); $('#v_name_en').text(`${r.fname_en || ''} ${r.lname_en || ''}`);
             $('#v_nickname').text(r.nickname || '-'); $('#v_id_card').text(r.id_card || '-');
-            $('#v_birthdate').text(r.birthdate || '-'); $('#v_blood').text(r.blood_type || '-');
+            $('#v_birthdate').text(formatThaiDate(r.birthdate)); $('#v_blood').text(r.blood_type || '-');
             $('#v_shirt').text(r.shirt_size || '-'); $('#v_room').text(r.room ? `ห้อง ${r.room}` : '-');
             $('#v_phone').text(r.phone || '-'); $('#v_school_email').text(r.school_email || '-');
             $('#v_personal_email').text(r.personal_email || '-'); $('#v_line').text(r.line_id || '-');
@@ -798,8 +875,7 @@ $(document).ready(function() {
         }
 
         async function saveFullEdit(e) {
-            e.preventDefault();
-            const id = $('#e_id').val();
+            e.preventDefault(); const id = $('#e_id').val();
             const updateObj = {
                 academic_year: $('#e_academic_year').val(), std_id: $('#e_std_id').val(), id_card: $('#e_id_card').val(),
                 prefix: $('#e_prefix').val(), fname_th: $('#e_fname_th').val(), lname_th: $('#e_lname_th').val(),
@@ -813,96 +889,35 @@ $(document).ready(function() {
                 parent_name: $('#e_parent_name').val(), parent_phone: $('#e_parent_phone').val()
             };
             const { error } = await db.from('student_council').update(updateObj).eq('id', id);
-            if(error) Swal.fire('Error', error.message, 'error');
-            else { Swal.fire('Saved', 'บันทึกสำเร็จ', 'success'); location.reload(); }
+            if(error) Swal.fire('Error', error.message, 'error'); else { Swal.fire('Saved', 'บันทึกสำเร็จ', 'success'); location.reload(); }
         }
 
         window.deleteStudent = async function(id) {
             const res = await Swal.fire({title:'ยืนยันลบ?', text:'ข้อมูลจะหายไปถาวร', icon:'warning', showCancelButton:true, confirmButtonColor:'#d33', confirmButtonText:'ลบเลย'});
-            if(res.isConfirmed) {
-                const { error } = await db.from('student_council').delete().eq('id', id);
-                if(error) Swal.fire('ลบไม่ได้', 'ตรวจสอบ Policy', 'error');
-                else { Swal.fire('เรียบร้อย', 'ลบข้อมูลแล้ว', 'success'); setTimeout(() => location.reload(), 1000); }
-            }
+            if(res.isConfirmed) { const { error } = await db.from('student_council').delete().eq('id', id); if(error) Swal.fire('ลบไม่ได้', 'ตรวจสอบ Policy', 'error'); else { Swal.fire('เรียบร้อย', 'ลบข้อมูลแล้ว', 'success'); setTimeout(() => location.reload(), 1000); } }
         }
-        // ฟังก์ชันเปิด Modal และดึงรายการปีที่มีอยู่ในระบบมาแสดงใน Dropdown
-async function openDeleteYearModal() {
-    // ดึงปีการศึกษาที่ไม่ซ้ำกัน (Distinct) จาก Database
-    const { data, error } = await db.from('student_council').select('academic_year');
-    
-    if (error) return Swal.fire('Error', 'ไม่สามารถดึงข้อมูลปีการศึกษาได้', 'error');
 
-    // กรองเอาเฉพาะปีที่ไม่ซ้ำ และเรียงจากมากไปน้อย
-    const years = [...new Set(data.map(item => item.academic_year))].sort((a, b) => b - a);
-    
-    const select = $('#deleteYearSelect');
-    select.empty();
-    
-    if (years.length === 0 || (years.length === 1 && years[0] === null)) {
-        select.append('<option value="">-- ไม่มีข้อมูล --</option>');
-    } else {
-        years.forEach(year => {
-            if(year) select.append(`<option value="${year}">ปีการศึกษา ${year}</option>`);
-        });
-    }
-    
-    new bootstrap.Modal('#deleteYearModal').show();
-}
-
-// ฟังก์ชันดำเนินการลบข้อมูลทั้งปี
-async function processDeleteYear() {
-    const year = $('#deleteYearSelect').val();
-    if (!year) return Swal.fire('แจ้งเตือน', 'ไม่มีปีการศึกษาให้ลบ', 'warning');
-
-    // ยืนยันขั้นที่ 1
-    const confirm1 = await Swal.fire({
-        title: `ยืนยันลบข้อมูลปี ${year}?`,
-        text: `นักเรียนทุกคนในปีการศึกษา ${year} จะถูกลบออกจากฐานข้อมูล`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'ใช่, ฉันแน่ใจ',
-        cancelButtonText: 'ยกเลิก'
-    });
-
-    if (!confirm1.isConfirmed) return;
-
-    // --- ส่วนที่แก้ไข: ปิด Modal เดิมก่อนเพื่อไม่ให้มันบล็อกการพิมพ์ ---
-    $('#deleteYearModal').modal('hide'); 
-
-    // ยืนยันขั้นที่ 2
-    const { value: confirmText } = await Swal.fire({
-        title: 'ยืนยันความปลอดภัย',
-        html: `กรุณาพิมพ์คำว่า <b class="text-danger">${year}</b> เพื่อยืนยันการลบข้อมูลทั้งหมด`,
-        input: 'text',
-        inputPlaceholder: `${year}`,
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        confirmButtonText: 'ลบทิ้งถาวร!',
-        cancelButtonText: 'ยกเลิก',
-        allowOutsideClick: false,
-        didOpen: () => {
-            // สั่งให้ Focus ไปที่ช่องพิมพ์ทันทีเมื่อเปิดขึ้นมา
-            const input = Swal.getInput();
-            if (input) input.focus();
+        async function openDeleteYearModal() {
+            const { data, error } = await db.from('student_council').select('academic_year');
+            if (error) return Swal.fire('Error', 'ไม่สามารถดึงข้อมูลปีการศึกษาได้', 'error');
+            const years = [...new Set(data.map(item => item.academic_year))].sort((a, b) => b - a);
+            const select = $('#deleteYearSelect'); select.empty();
+            if (years.length === 0 || (years.length === 1 && years[0] === null)) { select.append('<option value="">-- ไม่มีข้อมูล --</option>'); } 
+            else { years.forEach(year => { if(year) select.append(`<option value="${year}">ปีการศึกษา ${year}</option>`); }); }
+            new bootstrap.Modal('#deleteYearModal').show();
         }
-    });
 
-    if (confirmText === `${year}`) {
-        Swal.fire({ title: 'กำลังลบข้อมูล...', didOpen: () => Swal.showLoading() });
-        
-        const { error } = await db.from('student_council').delete().eq('academic_year', year);
-        
-        if (error) {
-            Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถลบข้อมูลได้: ' + error.message, 'error');
-        } else {
-            Swal.fire('สำเร็จ', `ลบข้อมูลปีการศึกษา ${year} เรียบร้อยแล้ว`, 'success')
-            .then(() => location.reload());
+        async function processDeleteYear() {
+            const year = $('#deleteYearSelect').val(); if (!year) return Swal.fire('แจ้งเตือน', 'ไม่มีปีการศึกษาให้ลบ', 'warning');
+            const confirm1 = await Swal.fire({ title: `ยืนยันลบข้อมูลปี ${year}?`, text: `นักเรียนทุกคนในปีการศึกษา ${year} จะถูกลบออกจากฐานข้อมูล`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'ใช่, ฉันแน่ใจ', cancelButtonText: 'ยกเลิก' });
+            if (!confirm1.isConfirmed) return; $('#deleteYearModal').modal('hide'); 
+            const { value: confirmText } = await Swal.fire({ title: 'ยืนยันความปลอดภัย', html: `กรุณาพิมพ์คำว่า <b class="text-danger">${year}</b> เพื่อยืนยันการลบข้อมูลทั้งหมด`, input: 'text', inputPlaceholder: `${year}`, showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'ลบทิ้งถาวร!', cancelButtonText: 'ยกเลิก', allowOutsideClick: false, didOpen: () => { const input = Swal.getInput(); if (input) input.focus(); } });
+            if (confirmText === `${year}`) {
+                Swal.fire({ title: 'กำลังลบข้อมูล...', didOpen: () => Swal.showLoading() });
+                const { error } = await db.from('student_council').delete().eq('academic_year', year);
+                if (error) { Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถลบข้อมูลได้: ' + error.message, 'error'); } else { Swal.fire('สำเร็จ', `ลบข้อมูลปีการศึกษา ${year} เรียบร้อยแล้ว`, 'success').then(() => location.reload()); }
+            } else if (confirmText !== undefined) { Swal.fire('ข้อมูลไม่ถูกต้อง', 'รหัสยืนยันไม่ตรงกัน ข้อมูลจึงไม่ถูกลบ', 'error'); }
         }
-    } else if (confirmText !== undefined) {
-        Swal.fire('ข้อมูลไม่ถูกต้อง', 'รหัสยืนยันไม่ตรงกัน ข้อมูลจึงไม่ถูกลบ', 'error');
-    }
-}
     </script>
 </body>
 </html>
