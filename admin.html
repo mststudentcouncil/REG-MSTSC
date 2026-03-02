@@ -163,7 +163,8 @@
                         <thead class="bg-light text-primary">
                             <tr>
                                 <th>ปีการศึกษา</th> <th>รหัส</th> <th>บัตร ปชช.</th> <th>ชื่อ-สกุล (ไทย)</th>
-                                <th>ชื่อเล่น</th> <th>ห้อง</th> <th>อีเมล</th> <th>เบอร์โทร</th> <th>สถานะ</th> <th>จัดการ</th>
+                                <th>ชื่อเล่น</th> <th>ห้อง</th> <th>อีเมล</th> <th>เบอร์โทร</th> <th>สถานะ</th> 
+                                <th style="min-width: 140px;">จัดการ</th>
                                 <th class="d-none">ชื่อ (Eng)</th>
                                 <th class="d-none">วันเกิด</th>
                                 <th class="d-none">กรุ๊ปเลือด</th>
@@ -411,7 +412,8 @@
                     <select id="exportFormat" class="form-select border-success text-dark fw-bold mb-2">
                         <option value="excel">📊 Excel (.xlsx)</option>
                         <option value="csv">📄 CSV (.csv)</option>
-                        <option value="print">🖨️ PDF / สั่งพิมพ์ (แนวนอน)</option>
+                        <option value="print">🖨️ PDF / สั่งพิมพ์ตาราง (แนวนอน)</option>
+                        <option value="print_profiles">👤 พิมพ์โปรไฟล์รายบุคคล (คนละหน้า A4)</option>
                     </select>
                 </div>
                 <div class="modal-footer">
@@ -453,13 +455,14 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colGuide2">
-                                    <i class="fa-solid fa-users-gear me-2 text-primary"></i> 2. การจัดการข้อมูลรายบุคคล (ดู / แก้ไข / ลบ)
+                                    <i class="fa-solid fa-users-gear me-2 text-primary"></i> 2. การจัดการข้อมูลรายบุคคล (ดู / แก้ไข / พิมพ์ / ลบ)
                                 </button>
                             </h2>
                             <div id="colGuide2" class="accordion-collapse collapse" data-bs-parent="#accordionGuide">
                                 <div class="accordion-body">
                                     <p class="mb-2">สามารถค้นหานักเรียนได้อย่างรวดเร็วผ่าน <b>ช่องค้นหา</b> (พิมพ์ชื่อ นามสกุล หรือรหัสได้เลย)</p>
                                     <ul>
+                                        <li><b>พิมพ์แบบฟอร์ม:</b> กดปุ่ม <button class="btn btn-secondary btn-sm text-white" disabled><i class="fa-solid fa-print"></i></button> เพื่อพิมพ์ประวัตินักเรียนคนนี้ลงบนกระดาษ A4 1 หน้า</li>
                                         <li><b>ดูข้อมูล:</b> กดปุ่ม <button class="btn btn-info btn-sm text-white" disabled><i class="fa-solid fa-magnifying-glass"></i></button> เพื่อดูประวัตินักเรียนทุกช่อง</li>
                                         <li><b>แก้ไข:</b> กดปุ่ม <button class="btn btn-warning btn-sm" disabled><i class="fa-solid fa-pen-to-square"></i></button> ระบบจะเปิดหน้าต่างให้แก้ข้อมูลเฉพาะของคนนั้นๆ</li>
                                         <li><b>ลบข้อมูล:</b> กดปุ่ม <button class="btn btn-danger btn-sm" disabled><i class="fa-solid fa-trash"></i></button> หากกดยืนยัน ข้อมูลนักเรียนคนนี้จะหายไปจากระบบทันที</li>
@@ -498,7 +501,7 @@
                                         <li>กดปุ่ม <b>"ส่งออกข้อมูล"</b> (ปุ่มสีเขียว อยู่เหนือตารางค้นหา)</li>
                                         <li>เลือก <b>ปีการศึกษา</b> ที่ต้องการดึงข้อมูล</li>
                                         <li>ติ๊กเลือกเฉพาะ <b>คอลัมน์ข้อมูล</b> ที่ต้องการใช้งานจริง (เพื่อไม่ให้ตารางรกเกินไป)</li>
-                                        <li>เลือกรูปแบบไฟล์ <b>Excel, CSV หรือ PDF/สั่งพิมพ์</b> จากนั้นกดดำเนินการ</li>
+                                        <li>เลือกรูปแบบไฟล์ <b>Excel, CSV, สั่งพิมพ์ตาราง หรือ พิมพ์โปรไฟล์รายบุคคล</b> จากนั้นกดดำเนินการ</li>
                                     </ol>
                                 </div>
                             </div>
@@ -589,6 +592,17 @@
                 if (event === 'SIGNED_IN' && session) { checkUserAndRedirect(session.user); } 
                 else if (event === 'SIGNED_OUT') { $('#admin-content').hide(); $('#login-overlay').fadeIn(); }
             });
+
+            // ปรับปิด/เปิดคอลัมน์เวลาเลือกปริ้นโปรไฟล์
+            $('#exportFormat').on('change', function() {
+                if ($(this).val() === 'print_profiles') {
+                    $('#exportColumnCheckboxes').css('opacity', '0.5');
+                    $('.col-export-cb').prop('disabled', true);
+                } else {
+                    $('#exportColumnCheckboxes').css('opacity', '1');
+                    $('.col-export-cb').prop('disabled', false);
+                }
+            });
         });
 
         async function loginWithGoogle() {
@@ -648,9 +662,10 @@
                         render: (d, t, r) => {
                             const row = encodeURIComponent(JSON.stringify(r));
                             return `
-                                <button class="btn btn-info btn-sm text-white" onclick="openView('${row}')" title="ดูข้อมูล"><i class="fa-solid fa-magnifying-glass"></i></button>
-                                <button class="btn btn-warning btn-sm" onclick="openEdit('${row}')" title="แก้ไข"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteStudent('${r.id}')" title="ลบ"><i class="fa-solid fa-trash"></i></button>
+                                <button class="btn btn-secondary btn-sm text-white shadow-sm" onclick="printSingleStudent('${row}')" title="พิมพ์ประวัติ"><i class="fa-solid fa-print"></i></button>
+                                <button class="btn btn-info btn-sm text-white shadow-sm" onclick="openView('${row}')" title="ดูข้อมูล"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                <button class="btn btn-warning btn-sm shadow-sm" onclick="openEdit('${row}')" title="แก้ไข"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button class="btn btn-danger btn-sm shadow-sm" onclick="deleteStudent('${r.id}')" title="ลบ"><i class="fa-solid fa-trash"></i></button>
                             `;
                         }
                     },
@@ -757,6 +772,100 @@
             else { Swal.fire('สำเร็จ', 'บันทึกข้อมูลแบบตารางเรียบร้อยแล้ว', 'success').then(() => { location.reload(); }); }
         }
 
+        // ================= INDIVIDUAL PROFILES PRINT LOGIC =================
+        function printStudentProfiles(students) {
+            let html = `
+            <html>
+            <head>
+                <title>พิมพ์ประวัตินักเรียน</title>
+                <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+                <style>
+                    /* บังคับขอบกระดาษให้น้อยลง เพื่อให้มีพื้นที่แสดงผลมากขึ้น */
+                    @page { size: A4 portrait; margin: 8mm; }
+                    body { font-family: 'Sarabun', sans-serif; margin: 0; padding: 0; color: #333; }
+                    .page { width: 100%; box-sizing: border-box; page-break-after: always; padding: 0 5mm; }
+                    .page:last-child { page-break-after: auto; }
+                    
+                    /* ปรับ Header ให้กระชับขึ้น */
+                    .header { text-align: center; margin-bottom: 12px; border-bottom: 2px solid #6A1B9A; padding-bottom: 8px; }
+                    .header img { width: 75px; height: 75px; border-radius: 50%; object-fit: cover; }
+                    .header h2 { margin: 8px 0 2px 0; font-size: 22px; color: #6A1B9A; font-weight: 600; }
+                    .header p { margin: 0; font-size: 14px; color: #666; }
+                    
+                    /* ปรับหัวข้อแต่ละส่วนให้เล็กลงนิดหน่อย */
+                    .section-title { font-size: 16px; font-weight: bold; background-color: #f3f0f7; padding: 4px 10px; margin-top: 10px; border-left: 5px solid #6A1B9A; border-radius: 3px; }
+                    
+                    /* ปรับตารางให้ชิดกันขึ้น */
+                    table { width: 100%; border-collapse: collapse; margin-top: 5px; font-size: 15px; }
+                    td { padding: 4px 4px; border-bottom: 1px dotted #ccc; vertical-align: top; }
+                    .label { font-weight: bold; width: 35%; color: #444; }
+                    .val { width: 65%; color: #000; }
+                </style>
+            </head>
+            <body>
+            `;
+
+            students.forEach(r => {
+                let fullAddress = `${r.addr_no || ''} ${r.district || ''} ${r.amphoe || ''} ${r.province || ''} ${r.zipcode || ''}`.trim();
+                html += `
+                <div class="page">
+                    <div class="header">
+                        <img src="https://i.postimg.cc/yxjxZmRN/Logo-mstsc-(1)-(1).png">
+                        <h2>ประวัติส่วนตัวคณะกรรมการสภานักเรียน</h2>
+                        <p>โรงเรียนเมืองสุราษฎร์ธานี ปีการศึกษา ${r.academic_year || '-'}</p>
+                    </div>
+
+                    <div class="section-title">ข้อมูลพื้นฐาน</div>
+                    <table>
+                        <tr><td class="label">รหัสนักเรียน</td><td class="val">${r.std_id || '-'}</td></tr>
+                        <tr><td class="label">เลขประจำตัวประชาชน</td><td class="val">${r.id_card || '-'}</td></tr>
+                        <tr><td class="label">ชื่อ - นามสกุล (ไทย)</td><td class="val">${r.prefix||''} ${r.fname_th||''} ${r.lname_th||''}</td></tr>
+                        <tr><td class="label">ชื่อ - นามสกุล (อังกฤษ)</td><td class="val">${r.fname_en||''} ${r.lname_en||''}</td></tr>
+                        <tr><td class="label">ชื่อเล่น</td><td class="val">${r.nickname || '-'}</td></tr>
+                        <tr><td class="label">ชั้นเรียน/ห้อง</td><td class="val">${r.room ? 'ห้อง ' + r.room : '-'}</td></tr>
+                    </table>
+
+                    <div class="section-title">ข้อมูลส่วนตัว</div>
+                    <table>
+                        <tr><td class="label">วัน/เดือน/ปีเกิด</td><td class="val">${formatThaiDate(r.birthdate)}</td></tr>
+                        <tr><td class="label">กรุ๊ปเลือด</td><td class="val">${r.blood_type || '-'}</td></tr>
+                        <tr><td class="label">ไซส์เสื้อ</td><td class="val">${r.shirt_size || '-'}</td></tr>
+                    </table>
+
+                    <div class="section-title">ข้อมูลการติดต่อ</div>
+                    <table>
+                        <tr><td class="label">เบอร์โทรศัพท์มือถือ</td><td class="val">${r.phone || '-'}</td></tr>
+                        <tr><td class="label">อีเมลโรงเรียน</td><td class="val">${r.school_email || '-'}</td></tr>
+                        <tr><td class="label">อีเมลส่วนตัว</td><td class="val">${r.personal_email || '-'}</td></tr>
+                        <tr><td class="label">Line ID</td><td class="val">${r.line_id || '-'}</td></tr>
+                        <tr><td class="label">ช่องทาง Social Media</td><td class="val">${r.social || '-'}</td></tr>
+                        <tr><td class="label">ที่อยู่ปัจจุบัน</td><td class="val">${fullAddress || '-'}</td></tr>
+                    </table>
+
+                    <div class="section-title">ข้อมูลผู้ปกครอง</div>
+                    <table>
+                        <tr><td class="label">ชื่อ - นามสกุล ผู้ปกครอง</td><td class="val">${r.parent_name || '-'}</td></tr>
+                        <tr><td class="label">เบอร์โทรศัพท์ผู้ปกครอง</td><td class="val">${r.parent_phone || '-'}</td></tr>
+                    </table>
+                </div>
+                `;
+            });
+
+            html += `</body></html>`;
+            
+            const printWin = window.open('', '_blank');
+            printWin.document.write(html);
+            printWin.document.close();
+            printWin.onload = function() {
+                setTimeout(function() { printWin.print(); }, 500);
+            };
+        }
+
+        window.printSingleStudent = function(encodedRow) {
+            const r = JSON.parse(decodeURIComponent(encodedRow));
+            printStudentProfiles([r]);
+        }
+
         // ================= EXPORT MODAL LOGIC =================
         function openExportModal() {
             const rawYears = table.column(0).data().toArray();
@@ -769,7 +878,7 @@
             let colHtml = `<div class="form-check mb-2" style="grid-column: 1 / -1;"><input class="form-check-input" type="checkbox" id="selectAllCols" onchange="toggleAllCols(this)" checked><label class="form-check-label fw-bold" for="selectAllCols">เลือกข้อมูลทั้งหมด</label></div><div class="w-100 border-bottom mb-2" style="grid-column: 1 / -1;"></div>`;
             exportableColumns.forEach(col => { colHtml += `<div class="form-check my-1"><input class="form-check-input col-export-cb" type="checkbox" value="${col.idx}" id="cb_c_${col.idx}" checked><label class="form-check-label small" for="cb_c_${col.idx}">${col.name}</label></div>`; });
             $('#exportColumnCheckboxes').html(colHtml);
-            $('#exportFormat').val('excel'); 
+            $('#exportFormat').val('excel').trigger('change'); 
             new bootstrap.Modal('#exportModal').show();
         }
 
@@ -778,14 +887,29 @@
 
         function processExport() {
             window.selectedExportYears = []; $('.year-export-cb:checked').each(function() { window.selectedExportYears.push($(this).val()); });
-            window.selectedExportColumns = []; $('.col-export-cb:checked').each(function() { window.selectedExportColumns.push(parseInt($(this).val())); });
             if(window.selectedExportYears.length === 0) return Swal.fire('แจ้งเตือน', 'กรุณาเลือกปีการศึกษาอย่างน้อย 1 ปี', 'warning');
-            if(window.selectedExportColumns.length === 0) return Swal.fire('แจ้งเตือน', 'กรุณาเลือกข้อมูลอย่างน้อย 1 อย่าง', 'warning');
 
             const format = $('#exportFormat').val();
+
+            if (format === 'print_profiles') {
+                const allData = table.rows({ search: 'applied' }).data().toArray();
+                const filteredData = allData.filter(d => window.selectedExportYears.includes(d.academic_year.toString()));
+                
+                if(filteredData.length === 0) return Swal.fire('ไม่พบข้อมูล', 'ไม่มีนักเรียนในปีการศึกษาที่เลือก', 'warning');
+                
+                printStudentProfiles(filteredData);
+                $('#exportModal').modal('hide');
+                return;
+            }
+
+            // ถ้าเป็น Excel, CSV หรือ ปริ้นท์ตาราง ต้องเช็คคอลัมน์
+            window.selectedExportColumns = []; $('.col-export-cb:checked').each(function() { window.selectedExportColumns.push(parseInt($(this).val())); });
+            if(window.selectedExportColumns.length === 0) return Swal.fire('แจ้งเตือน', 'กรุณาเลือกข้อมูลอย่างน้อย 1 อย่าง', 'warning');
+
             if (format === 'excel') table.button('.hidden-excel-btn').trigger();
             else if (format === 'csv') table.button('.hidden-csv-btn').trigger();
             else if (format === 'print') table.button('.hidden-print-btn').trigger();
+            
             $('#exportModal').modal('hide');
         }
 
