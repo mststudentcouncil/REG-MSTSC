@@ -227,21 +227,21 @@
 
     <div id="adminDashboard" class="hidden-auth min-h-screen flex flex-col">
         <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="w-full px-4 md:px-8">
                 <div class="flex justify-between h-16 items-center">
                     <div class="flex items-center gap-3">
                         <img src="https://i.postimg.cc/yxjxZmRN/Logo-mstsc-(1)-(1).png" class="h-10 w-10">
                         <div>
-                            <span class="font-black text-mst-purple text-lg tracking-wide leading-tight block">ADMIN REGIS</span>
+                            <span class="font-black text-mst-purple text-lg tracking-wide leading-tight block">ADMIN REGIS (ระบบจัดเก็บข้อมูลสภานักเรียน)</span>
                             <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block" id="adminEmailShow">...</span>
                         </div>
                     </div>
                     <div class="flex items-center gap-2 md:gap-4">
                         <button onclick="$('#guideModal').removeClass('hidden')" class="text-blue-500 hover:text-blue-700 bg-blue-50 px-3 py-1.5 rounded-lg font-bold text-sm transition-colors">
-                            <i class="fa-solid fa-circle-question mr-1"></i> <span class="hidden md:inline">คู่มือ</span>
+                            <i class="fa-solid fa-circle-question mr-1"></i> <span class="hidden md:inline">คู่มือการใช้งานระบบ</span>
                         </button>
-                        <button onclick="loadData()" class="text-gray-500 hover:text-mst-purple transition-colors bg-gray-50 px-3 py-1.5 rounded-lg" title="รีเฟรชข้อมูล">
-                            <i class="fa-solid fa-rotate-right"></i>
+                        <button onclick="loadData()" class="text-gray-500 hover:text-mst-purple px-3 md:px-4 py-1.5 md:py-2 rounded-lg font-bold text-sm transition-colors">
+                            <i class="fa-solid fa-rotate-right"></i> <span class="hidden md:inline">รีเฟรชข้อมูล</span>
                         </button>
                         <button onclick="logoutAdmin()" class="bg-red-50 hover:bg-red-100 text-red-600 px-3 md:px-4 py-1.5 md:py-2 rounded-lg font-bold text-sm transition-colors">
                             <i class="fa-solid fa-power-off mr-1"></i> <span class="hidden md:inline">ออกจากระบบ</span>
@@ -251,7 +251,7 @@
             </div>
         </nav>
 
-        <div class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        <div class="flex-grow w-full px-4 md:px-8 py-8">
             
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
                 <div class="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-gray-100">
@@ -290,7 +290,6 @@
 
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-6 overflow-hidden relative">
                 <div id="tableLoader" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center hidden">
-                    <div class="loader mb-4"></div>
                     <p class="text-mst-purple font-bold">กำลังโหลดข้อมูล...</p>
                 </div>
                 <div class="overflow-x-auto">
@@ -450,7 +449,7 @@
                     <div class="bg-purple-50 p-5 rounded-2xl border border-purple-200 shadow-sm flex items-center justify-between">
                         <div>
                             <p class="font-bold text-purple-800">สถานะรายงานตัว</p>
-                            <p class="text-xs text-purple-600">แอดมินสามารถเปลี่ยนสถานะเพื่ออนุมัติได้</p>
+                            <p class="text-xs text-purple-600">สามารถเปลี่ยนสถานะเพื่ออนุมัติได้</p>
                         </div>
                         <select id="e_status" class="input-clean font-black text-mst-purple w-48 text-center border-purple-400 bg-white">
                             <option value="รอดำเนินการรายงานตัว">รอข้อมูล</option>
@@ -528,13 +527,31 @@
 
     <div id="importModal" class="fixed inset-0 bg-gray-900/70 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
         <div class="bg-white rounded-3xl w-full max-w-2xl p-8 shadow-2xl flex flex-col max-h-[90vh]">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-black text-mst-purple"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> นำเข้ารายชื่ออัจฉริยะ</h3>
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-black text-mst-purple"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> นำเข้ารายชื่อนักเรียน</h3>
                 <button onclick="$('#importModal').addClass('hidden')" class="text-gray-400 hover:text-gray-700 bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <p class="text-sm text-gray-600 mb-4 bg-purple-50 p-3 rounded-xl border border-purple-100">วางรายชื่อที่ก๊อปปี้มา (1 คนต่อ 1 บรรทัด) เช่น <br><code class="bg-white px-2 py-1 rounded text-mst-purple font-bold mt-2 inline-block shadow-sm">29903 นายวิริทธิ์พล สุบรรณ์</code></p>
+            
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-2xl border border-blue-100 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+                <div>
+                    <h4 class="font-black text-blue-800 text-sm"><i class="fa-solid fa-link mr-1"></i> ดึงจากระบบรับสมัคร (แนะนำ)</h4>
+                    <p class="text-xs text-blue-600 mt-1">สามารถส่งรายชื่อผู้ผ่านการคัดเลือกจากระบบรับสมัครมายังที่นี่ได้โดยตรง โดยไม่ต้องคัดลอกวางเอง</p>
+                </div>
+                <a href="https://admission-mstsc.pages.dev/admin_admission.html" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md transition-all whitespace-nowrap inline-flex items-center">
+                    <i class="fa-solid fa-cloud-arrow-down mr-2"></i> ไปหน้าจัดการรับสมัคร
+                </a>
+            </div>
+
+            <div class="relative flex py-2 items-center mb-4">
+                <div class="flex-grow border-t border-gray-200"></div>
+                <span class="flex-shrink-0 mx-4 text-gray-400 text-xs font-bold uppercase tracking-widest">หรือ เพิ่มแบบพิมพ์เอง</span>
+                <div class="flex-grow border-t border-gray-200"></div>
+            </div>
+
+            <p class="text-sm text-gray-600 mb-4 bg-purple-50 p-3 rounded-xl border border-purple-100">วางรายชื่อที่คัดลอกมา (1 คนต่อ 1 บรรทัด) เช่น <br><code class="bg-white px-2 py-1 rounded text-mst-purple font-bold mt-2 inline-block shadow-sm">29903 นายวิริทธิ์พล สุบรรณ์</code></p>
             <div class="mb-4"><label class="text-xs font-bold text-gray-700 mb-1 block">ปีการศึกษาที่จะนำเข้า</label><input type="number" id="importYear" class="w-full border border-gray-300 rounded-xl p-3 outline-none focus:border-mst-purple font-bold text-mst-purple bg-white"></div>
-            <textarea id="importTextarea" rows="8" class="w-full border border-gray-300 rounded-xl p-4 outline-none focus:border-mst-purple text-sm mb-6 custom-scrollbar bg-white" placeholder="ก๊อปปี้จาก Excel หรือ Word มาวางตรงนี้..."></textarea>
+            <textarea id="importTextarea" rows="6" class="w-full border border-gray-300 rounded-xl p-4 outline-none focus:border-mst-purple text-sm mb-6 custom-scrollbar bg-white" placeholder="คัดลอกจาก Excel หรือ Word มาวางตรงนี้..."></textarea>
+
             <div class="flex justify-end gap-3 mt-auto border-t pt-4 border-gray-100">
                 <button onclick="$('#importModal').addClass('hidden')" class="px-6 py-2.5 rounded-xl font-bold text-gray-500 hover:bg-gray-100">ยกเลิก</button>
                 <button onclick="processSmartImport()" class="bg-gradient-to-r from-mst-purple to-purple-800 text-white px-8 py-2.5 rounded-xl font-bold shadow-md hover:shadow-lg transition-all"><i class="fa-solid fa-upload mr-2"></i> นำเข้าสู่ระบบ</button>
@@ -545,27 +562,31 @@
     <div id="guideModal" class="fixed inset-0 bg-gray-900/70 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
         <div class="bg-white rounded-3xl w-full max-w-3xl p-8 shadow-2xl flex flex-col max-h-[90vh]">
             <div class="flex justify-between items-center mb-4 pb-4 border-b">
-                <h3 class="text-xl md:text-2xl font-black text-blue-600"><i class="fa-solid fa-book-open mr-2"></i> คู่มือการใช้งานระบบแอดมิน</h3>
+                <h3 class="text-xl md:text-2xl font-black text-blue-600"><i class="fa-solid fa-book-open mr-2"></i> คู่มือการใช้งานระบบ</h3>
                 <button onclick="$('#guideModal').addClass('hidden')" class="text-gray-400 hover:text-gray-700 bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
             <div class="overflow-y-auto custom-scrollbar flex-grow pr-2 text-sm text-gray-700 leading-relaxed">
                 <div class="mb-5">
                     <h4 class="font-bold text-lg text-mst-purple mb-2"><i class="fa-solid fa-1 mr-1"></i> การนำเข้ารายชื่อนักเรียน</h4>
-                    <p>ระบบใช้ <b>"นำเข้ารายชื่ออัจฉริยะ"</b> ให้แอดมินก๊อปปี้รายชื่อจากไลน์ หรือ Excel มาวางในช่องได้เลย โดยพิมพ์บรรทัดละ 1 คน (ต้องมีรหัส 5 หลักนำหน้า) เช่น <code>29903 นายวิริทธิ์พล สุบรรณ์</code> ระบบจะตัดแยกคำนำหน้า ชื่อ นามสกุล ให้เองอัตโนมัติ</p>
+                    <p class="mb-2">สามารถสร้างฐานข้อมูลรายชื่อให้ผู้สมัครเข้ามารายงานตัวได้ 2 วิธี:</p>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li><b>วิธีที่ 1 (อัตโนมัติจากรับสมัคร):</b> ไปที่ <b>"ระบบจัดการรับสมัคร (Admission)"</b> เมื่อคัดเลือกผู้ผ่านเข้ารอบเรียบร้อยแล้ว ให้กดปุ่ม <b>"ส่งเข้าระบบรายงานตัว"</b> รายชื่อทั้งหมดจะซิงค์มายังระบบนี้ทันทีโดยอัตโนมัติ</li>
+                        <li><b>วิธีที่ 2 (คัดลอกเอง):</b> กดปุ่ม <b>"นำเข้ารายชื่อ"</b> แล้วคัดลอกรายชื่อจาก Excel มาวางในช่อง (บรรทัดละ 1 คน ต้องมีรหัส 5 หลักนำหน้า) เช่น <code>29903 นายวิริทธิ์พล สุบรรณ์</code></li>
+                    </ul>
                 </div>
                 
                 <div class="mb-5">
                     <h4 class="font-bold text-lg text-mst-purple mb-2"><i class="fa-solid fa-2 mr-1"></i> การแก้ไขข้อมูล</h4>
                     <ul class="list-disc pl-5">
-                        <li class="mb-1"><b>แก้ไขรายบุคคล:</b> กดไอคอน ✏️ (ดินสอสีเหลือง) ที่แถวของนักเรียน จะเปิดหน้าต่างแก้ไขข้อมูลทั้งหมด มีระบบพิมพ์รหัสไปรษณีย์แล้วตำบลเด้งอัตโนมัติ</li>
-                        <li><b>แก้ไขแบบตาราง:</b> กดปุ่ม "แก้ไขแบบตาราง" ด้านบน จะกางรายชื่อทุกคนออกมาเหมือน Excel ให้แอดมินพิมพ์แก้ได้ทีละหลายๆ คน เสร็จแล้วกด "บันทึก" ด้านล่างทีเดียว</li>
+                        <li class="mb-1"><b>แก้ไขรายบุคคล:</b> กดไอคอน ✏️  (ดินสอสีเหลือง) ที่แถวของนักเรียน จะเปิดหน้าต่างแก้ไขข้อมูลทั้งหมด มีระบบพิมพ์รหัสไปรษณีย์แล้วตำบลแสดงผลอัตโนมัติ</li>
+                        <li><b>แก้ไขแบบตาราง:</b> กดปุ่ม "แก้ไขแบบตาราง" ด้านบน จะแสดงรายชื่อทุกคนออกมาเหมือน Excel ให้พิมพ์แก้ได้ครั้งละหลายๆ คน เสร็จแล้วกด "บันทึก" ด้านล่าง</li>
                     </ul>
                 </div>
 
                 <div class="mb-5">
                     <h4 class="font-bold text-lg text-mst-purple mb-2"><i class="fa-solid fa-3 mr-1"></i> การส่งออกและพิมพ์ประวัติ</h4>
-                    <p>กดปุ่ม <b>"ส่งออกข้อมูล"</b> ระบบจะให้แอดมินเลือก ปีการศึกษา และ คอลัมน์ที่ต้องการได้อย่างอิสระ จากนั้นเลือกรูปแบบไฟล์:</p>
+                    <p>กดปุ่ม <b>"ส่งออกข้อมูล"</b> ระบบจะให้เลือก ปีการศึกษา และ คอลัมน์ที่ต้องการได้อย่างอิสระ จากนั้นเลือกรูปแบบไฟล์:</p>
                     <ul class="list-disc pl-5 mt-2">
                         <li><b>Excel / CSV:</b> สำหรับเอาไปทำ Data หรือสถิติต่อ</li>
                         <li><b>พิมพ์ตารางรายชื่อ:</b> ปริ้นท์ใบเช็คชื่อแบบตาราง</li>
@@ -684,8 +705,25 @@
         function resetLogin() { $('.g_id_signin').show(); $('#loginLoader').addClass('hidden').removeClass('flex'); }
 
         window.logoutAdmin = function() {
-            localStorage.removeItem('adminEmail_MSTSC');
-            location.reload();
+            Swal.fire({
+                title: 'ยืนยันการออกจากระบบ',
+                text: 'คุณต้องการออกจากระบบจัดการใช่หรือไม่',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#9ca3af',
+                confirmButtonText: '<i class="fa-solid fa-power-off mr-2"></i> ออกจากระบบ',
+                cancelButtonText: 'ยกเลิก',
+                customClass: { 
+                    confirmButton: 'rounded-xl shadow-md font-bold', 
+                    cancelButton: 'rounded-xl font-bold' 
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('adminEmail_MSTSC');
+                    location.reload();
+                }
+            });
         }
 
         // ==========================================
@@ -720,7 +758,7 @@
                 const fullName = `${s.prefix||''} ${s.fname_th||''} ${s.lname_th||''}`.trim();
                 const statusBadge = s.status === 'รายงานตัวสำเร็จ' 
                     ? `<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200"><i class="fa-solid fa-check mr-1"></i> รายงานตัวสำเร็จ</span>`
-                    : `<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold border border-yellow-200"><i class="fa-solid fa-clock mr-1"></i> รอข้อมูล</span>`;
+                    : `<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold border border-yellow-200"><i class="fa-solid fa-clock mr-1"></i> รอข้อมูลรายงานตัว</span>`;
 
                 const fullAddr = `${s.addr_no||''} ต.${s.district||''} อ.${s.amphoe||''} จ.${s.province||''} ${s.zipcode||''}`.trim();
                 
@@ -797,7 +835,7 @@
                 ordering: true
             });
             
-            $('.dataTables_filter input').addClass('border border-gray-300 rounded-full px-5 py-2 outline-none focus:border-mst-purple w-full md:w-80 shadow-sm').attr('placeholder', '🔍 ค้นหา รหัส, ชื่อ, เบอร์โทร...');
+            $('.dataTables_filter input').addClass('border border-gray-300 rounded-full px-5 py-2 outline-none focus:border-mst-purple w-full md:w-80 shadow-sm').attr('placeholder', ' ค้นหา รหัส, ชื่อ, เบอร์โทร...');
         }
 
         // ==========================================
