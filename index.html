@@ -239,6 +239,19 @@
                             <input type="hidden" id="existing_document_url">
                         </div>
 
+                        <!-- กล่องข้อความเตือนก่อนบันทึก (เพิ่มใหม่) -->
+                        <div class="mt-8 p-4 bg-red-50 rounded-2xl border border-red-200 flex items-start gap-3 shadow-sm relative z-20">
+                            <div class="bg-red-100 text-red-600 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                            <div>
+                                <b class="text-sm text-red-700 block mb-1">คำเตือน: กรุณาตรวจสอบข้อมูลก่อนบันทึก</b>
+                                <p class="text-xs text-red-600 leading-relaxed">
+                                    โปรดตรวจสอบความถูกต้องของข้อมูลทุกขั้นตอนอีกครั้ง <b>ท่านจะไม่สามารถแก้ไขข้อมูลด้วยตนเองในภายหลังได้</b> หากบันทึกแล้วพบข้อผิดพลาด จะต้องติดต่อห้องสภานักเรียนเพื่อทำการแก้ไขเท่านั้น
+                                </p>
+                            </div>
+                        </div>
+                        
                         <div class="mt-6 p-5 bg-[#f8fcfd] rounded-2xl border border-[#bce8f1]">
                             <label class="flex items-start cursor-pointer gap-3">
                                 <input type="checkbox" id="pdpa_consent" class="mt-1 w-5 h-5 text-mst-purple rounded border-gray-300 focus:ring-mst-purple relative z-20">
@@ -260,6 +273,43 @@
                 </form>
             </div>
         </div>
+        <!-- ส่วนที่จะแสดงเมื่อรายงานตัวสำเร็จแล้ว (เพิ่มใหม่) -->
+            <div id="successSection" class="hidden text-center py-8 relative z-10 fade-in">
+                <div class="inline-flex items-center justify-center w-24 h-24 bg-green-100 rounded-full mb-6 ring-4 ring-green-50 shadow-lg">
+                    <i class="fa-solid fa-check-circle text-6xl text-green-500"></i>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-black text-mst-purple mb-3">คุณได้กรอกข้อมูลรายงานตัวเรียบร้อยแล้ว</h2>
+                <p class="text-gray-600 mb-8 max-w-md mx-auto text-sm leading-relaxed">ข้อมูลของคุณถูกบันทึกเข้าสู่ระบบเรียบร้อยแล้ว หากต้องการแก้ไขข้อมูล กรุณาติดต่อห้องสภานักเรียนเพื่ออัพเดทข้อมูล</p>
+                
+                <div class="bg-white border border-gray-200 rounded-2xl p-6 max-w-lg mx-auto text-left shadow-sm">
+                    <h3 class="font-bold text-gray-800 mb-4 border-b pb-3"><i class="fa-solid fa-layer-group text-mst-purple mr-2"></i> ระบบที่คุณมีสิทธิ์เข้าใช้งาน</h3>
+                    <div class="space-y-3">
+                        <!-- ลิงก์ระบบคลังจัดเก็บเกียรติบัตร -->
+                        <a href="https://vault-mstsc.pages.dev/" target="_blank" class="flex items-center p-3 bg-gray-50 border border-gray-100 hover:border-mst-purple hover:bg-purple-50 rounded-xl transition-all group">
+                            <div class="w-12 h-12 bg-purple-100 text-mst-purple rounded-xl flex items-center justify-center mr-4 group-hover:bg-mst-purple group-hover:text-white transition-colors shadow-sm">
+                                <i class="fa-solid fa-certificate text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-800 text-sm group-hover:text-mst-purple transition-colors">ระบบคลังจัดเก็บเกียรติบัตรสภานักเรียน</p>
+                                <p class="text-xs text-gray-500">vault-mstsc.pages.dev</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right ml-auto text-gray-300 group-hover:text-mst-purple"></i>
+                        </a>
+                        
+                        <!-- ลิงก์ระบบลงคะแนนอิเล็กทรอนิกส์ -->
+                        <a href="https://mstsc-e-voting.pages.dev/" target="_blank" class="flex items-center p-3 bg-gray-50 border border-gray-100 hover:border-blue-500 hover:bg-blue-50 rounded-xl transition-all group">
+                            <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mr-4 group-hover:bg-blue-600 group-hover:text-white transition-colors shadow-sm">
+                                <i class="fa-solid fa-check-to-slot text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-800 text-sm group-hover:text-blue-600 transition-colors">ระบบลงคะแนนอิเล็กทรอนิกส์</p>
+                                <p class="text-xs text-gray-500">mstsc-e-voting.pages.dev</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right ml-auto text-gray-300 group-hover:text-blue-600"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
     </div>
 
     <script>
@@ -355,6 +405,25 @@
                                 $('#dob_month').val((dateObj.getMonth() + 1).toString().padStart(2,'0'));
                                 $('#dob_day').val(dateObj.getDate().toString().padStart(2,'0'));
                             }
+                        }
+                        // --- 1. ล็อกข้อมูลพื้นฐานที่ส่งมาจากระบบรับสมัคร ห้ามแก้ไข ---
+                        // แก้ไขโดยใส่ String() ครอบเพื่อป้องกัน Error กรณีข้อมูลเป็นตัวเลข
+                        if(d.id_card && String(d.id_card).trim() !== '') {
+                            $('#id_card').prop('readonly', true).addClass('pointer-events-none');
+                        }
+                        if(d.birthdate) {
+                            $('#dob_day, #dob_month, #dob_year').prop('disabled', true).addClass('pointer-events-none bg-gray-50 text-gray-500');
+                        }
+
+                        // --- 2. ตรวจสอบว่ารายงานตัวสำเร็จแล้วหรือยัง ---
+                        // เช็คจากสถานะ หรือ เช็คว่ามีข้อมูลที่อยู่และเบอร์โทรแล้ว (แสดงว่าเคยบันทึกแบบฟอร์มนี้แล้ว)
+                        const isAlreadyRegistered = d.status === 'รายงานตัวสำเร็จ' || (d.addr_no && d.phone);
+                        
+                        if(isAlreadyRegistered) {
+                            $('#loginSection').addClass('hidden');
+                            $('#registrationForm').addClass('hidden step-hidden'); // ซ่อนฟอร์มทั้งหมด
+                            $('#successSection').removeClass('hidden'); // แสดงหน้าสำเร็จพร้อมลิงก์
+                            return; // จบการทำงาน ไม่ต้องดึงข้อมูลส่วนอื่นต่อ เพื่อป้องกัน Error
                         }
 
                         const stuYear = parseInt(d.academic_year);
@@ -499,8 +568,16 @@
 
                 if (result.status === 'success') {
                     Swal.fire({
-                        title: 'บันทึกสำเร็จ!', text: 'ข้อมูลของคุณถูกบันทึกลงระบบรายงานตัวเรียบร้อยแล้ว', icon: 'success', confirmButtonColor: '#6A1B9A'
-                    }).then(() => { window.location.reload(); });
+                        title: 'บันทึกสำเร็จ!', 
+                        text: 'ระบบได้จัดเก็บข้อมูลรายงานตัวของคุณเรียบร้อยแล้ว', 
+                        icon: 'success', 
+                        confirmButtonColor: '#6A1B9A'
+                    }).then(() => { 
+                        // แทนที่จะรีเฟรชหน้า ให้ซ่อนฟอร์มและแสดงหน้า Success ทันที
+                        $('#registrationForm').addClass('step-hidden');
+                        $('#successSection').removeClass('hidden');
+                        window.scrollTo(0, 0); // เลื่อนกลับไปด้านบน
+                    });
                 } else {
                     Swal.fire('ข้อผิดพลาด', result.message, 'error');
                 }
